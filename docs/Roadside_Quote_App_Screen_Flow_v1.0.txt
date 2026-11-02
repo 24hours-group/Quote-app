@@ -1,0 +1,716 @@
+DEVELOPER HANDOFF · FROM CALL SCRIPT V02                      CONTENTS, IN FLOW ORDER
+
+Roadside Quote App                                            Page  Screen                        Shown when
+Screen Flow v1.0
+                                                              2     Overview                      How the screens connect
+One page per screen. Each page shows the phone wireframe                                          All prices and formulas
+on the left and, on the right, which screen follows each      3     Price Parameters              First screen, every session
+answer and how each answer changes the price.                                                     After S0
+                                                              4     S0 · Safety check             After S1, all request types
+   How to read each page                                                                          New request, after S2
+   Blue = next screen                                         5     S1 · Entry                    After S4, or after S2 for existing/cancel
+   Amber = price effect (keys from page 2)                                                        After S5, regular vehicle
+   Purple = hand-off to a person (page 20)                    6     S2 · Contact and phone check  S6 = Jump start
+    KEY_NAME = a value on the Price Parameters page.                                              S6 = Flat tire
+   Never hardcode it.                                         7     S4 · Vehicle location         S6 = Locked out
+                                                                                                  S6 = Tow, or T1 = Just tow
+   Tow mileage is typed by the customer on W2. The pickup     8     S5 · Vehicle                  After W1
+   and drop-off addresses go to the dispatcher only. The app                                      S6 = Out of gas
+   never calculates distance.                                 9     S6 · Service choice           S6 = Mechanic check
+                                                                                                  S6 = Stuck
+                                                              10    J1 · Jump start               Last service screen complete
+                                                                                                  S7 = Accept and pay
+                                                              11    T1 · Flat tire                Any screen raises a reason code
+
+                                                              12    L1 · Lockout
+
+                                                              13    W1 · Tow pickup and drop-off
+
+                                                              14    W2 · Tow miles and neutral
+
+                                                              15    G1 · Out of gas
+
+                                                              16    M1 · Mechanic check
+
+                                                              17    X1 · Winch-out
+
+                                                              18    S7 · Quote summary
+
+                                                              19    S8A · Payment
+
+                                                              20    R · Hand-off to a person
+
+Roadside Quote App · Screen Flow v1.0                                                  Contents                                              Page 1 of 20
+SELF-SERVICE QUOTE APP · FROM CALL SCRIPT V02 · SCREEN FLOW V1.0
+
+Every customer answers the same 6 screens, then one service path,
+then gets a quote.
+
+Each board on this canvas is one screen: the phone wireframe on the left, and on the right which screen follows each
+answer and how each answer changes the price.
+
+1 · COMMON SCREENS
+
+Safety                  S1 Entry                     S2 Contact  S4 Location  S5 Vehicle 
+
+S0
+
+Service
+
+S6
+
+2 · ONE SERVICE PATH, PICKED ON S6
+
+Jump start  Flat tire  Lockout         Tow          Out of gas  Mechanic check  X1 Winch-out  S7 Quote   Pay
+
+J1          T1         L1              W1  W2       G1          M1                                                 S8A
+
+Blue = next screen                                  Amber = price effect                               Purple = hand-off (R)
+                                                    Prices come only from the Price Parameters board.
+Each board lists every answer and the screen it     A formula names a key like                         From any screen, a case the app can't quote goes to
+leads to. Edits on S7 jump back to that screen and                                                     a person. No price is shown. The reason code
+recalculate.                                         TOW_RATE_SHORT                                    travels with the lead.
+
+                                                    , never a number.
+
+Tow mileage is typed by the customer.
+W1 collects pickup and drop-off addresses for the dispatcher only. The miles that set the price come from the number the customer enters on W2. The app does not
+calculate distance.
+
+Roadside Quote App · Screen Flow v1.0                                           Overview                                                                          Page 2 of 20
+PRICE TABLE V1.0 · THE ONLY PLACE VALUES LIVE
+
+Change a value here and every quote follows; no screen or formula changes.
+
+Day = DAY_START to DAY_END at the vehicle's local time. Every quote stores the table version it used. TBD = not defined in V02; default shown.
+
+Key                      Meaning                              Value   Key                                Meaning                       Value
+Rules
+DAY_START                Day rate starts                      07:00   Towing (miles typed by customer on W2)                           $169
+DAY_END                  Night rate starts (7:00 PM = night)  19:00                                                                    $189
+QUOTE_VALID_MIN          Recalculate quote after TBD          30 min  TOW_HOOK_NEUTRAL_OK                Hook fee, neutral works       $8/mi
+ROUNDING                 Miles and feet round up              ceil                                                                     $10/mi
+Jump start                                                            TOW_HOOK_NEUTRAL_FAIL              Hook fee, no or not sure      20 mi
+JS_1_DAY                 1 battery, day                       $150                                                                     100 mi
+JS_1_NIGHT               1 battery, night                     $200    TOW_RATE_SHORT                     Per mile, trip  threshold
+JS_2                     2 batteries, any time TBD            $229                                                                     $199
+JS_3                     3 batteries, any time TBD            $265    TOW_RATE_LONG                      Per mile, trip > threshold    $4.00/gal
+JS_4                     4 batteries, any time TBD            $295                                                                     5 mi
+JS_MAX_BATTERIES         More  hand-off                       4       TOW_THRESHOLD_MI                   Short/long cut-off TBD        $5/mi
+Tire, lockout, mechanic
+TIRE_DAY                 Change or replacement, day           $165    TOW_MAX_MI                         Longer  hand-off TBD          $285
+TIRE_NIGHT               Change or replacement, night         $200                                                                     10 ft
+LOCKOUT_DAY              Lockout, day                         $150    Gas delivery                                                     10 ft
+LOCKOUT_NIGHT            Lockout, night                       $200                                                                     $100
+MECH_DAY                 Assessment, day                      $150    GAS_BASE                           Base fee
+MECH_NIGHT               Assessment, night                    $300
+                                                                      GAS_PRICE_PER_GAL                  Fuel price charged TBD
+
+                                                                      GAS_INCLUDED_MI                    Delivery miles in base
+
+                                                                      GAS_RATE_PER_MI                    Per delivery mile after that
+
+                                                                      Winch-out
+
+                                                                      WINCH_BASE                         Fixed fee
+
+                                                                      WINCH_INCLUDED_FT                  Feet from pavement in base
+
+                                                                      WINCH_STEP_FT                      Size of each extra step
+
+                                                                      WINCH_STEP_PRICE                   Price per extra step
+
+FORMULAS (READ KEYS, NEVER NUMBERS)
+
+period       = DAY_START  local_time < DAY_END ? DAY : NIGHT          rate(X) = X_DAY or X_NIGHT
+Jump start   = n = 1 ? rate(JS_1) : JS_n                                 n > JS_MAX_BATTERIES  hand-off
+Tire change
+Lockout      = rate(TIRE)              Tire replacement = rate(TIRE) + cost of tire (set by dispatcher)
+Tow
+             = rate(LOCKOUT)           Mechanic check = rate(MECH)
+Gas
+Winch-out    = hook + ceil(miles_typed) × (ceil(miles_typed)  TOW_THRESHOLD_MI ? TOW_RATE_SHORT : TOW_RATE_LONG)
+
+             hook = neutral = yes ? TOW_HOOK_NEUTRAL_OK : TOW_HOOK_NEUTRAL_FAIL
+
+             = GAS_BASE + gallons × GAS_PRICE_PER_GAL (+ GAS_RATE_PER_MI per delivery mile over GAS_INCLUDED_MI, confirmed by dispatcher)
+
+             = WINCH_BASE + max(0, ceil((feet - WINCH_INCLUDED_FT) / WINCH_STEP_FT)) × WINCH_STEP_PRICE
+
+Roadside Quote App · Screen Flow v1.0                                 Price Parameters                                                 Page 3 of 20
+Step 1 of 9                                   Roadside help  S0 · SAFETY
+
+Are you in a safe place?                                     Safety check
+
+If anyone is hurt or you are in danger, call 911 first.      Shown when: first screen of every session.
+We can help with your vehicle after.
+                                                             ANSWER  NEXT SCREEN                         Next
+   Yes, I'm safe                                                Answer
+                                                                                                         S1 · Entry
+                                                               Yes, I'm safe                             911 notice with "Call 911" and "I'm safe now"; then S1 · Entry
+                                                               No, or someone is injured
+
+No, or someone is injured                                    Talk to a person (on every screen)          R · USER_REQUEST
+
+                                                             ANSWER  PRICE
+
+                                                             No price effect. This screen is a safety step only and is not stored on the quote.
+
+                            Continue                                                      S0 · Safety check                                      Page 4 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 2 of 9                                   Roadside help  S1 · ENTRY
+
+What can we help you with?                                   Entry
+
+   Get help now (new request)                                Shown when: after S0. Sets request_type = new, existing or cancel.
+
+                                                             ANSWER  NEXT SCREEN   Next
+                                                                Answer
+
+                                                             Get help now          S2 · Contact  full path
+
+Check on a request I already made
+
+                                                             Check on a request I  S2 · Contact  S5 · Vehicle (year, make, model)  R · EXISTING_JOB: "The
+                                                             already made          agent handling your job will contact you shortly."
+
+Cancel a request                                             Cancel a request      S2 · Contact  S5 · Vehicle  R · CANCEL_JOB: "The agent will contact you
+                                                                                   about cancellation and refund options."
+
+                                                             Existing and cancel requests skip location, service and quote. Phone and vehicle are enough for the dispatcher to
+                                                             find the job.
+
+                                                             ANSWER  PRICE
+
+                                                             No price effect. Only "new request" leads to a quote.
+
+                            Continue                                               S1 · Entry                                    Page 5 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 3 of 9                                   Roadside help  S2 · CONTACT
+
+How can we reach you?                                        Contact and phone check
+
+Full name                                                    Shown when: after S1, for every request type. The code field appears after a valid number is entered.
+
+  First and last name                                        FIELDS AND CHECKS  Rule
+                                                                Field
+Mobile number                                                                   At least two words. Used to greet the customer on later screens.
+                                                               Full name        Valid US mobile number. Invoice and dispatcher calls go here.
+  (555) 555-0100                                               Mobile number
+
+      Text me the invoice and job updates at this            Text consent       Required to send the invoice by text (V02 step 10).
+      number.
+6-digit code we just texted you                              6-digit code       Must match the code sent by SMS. 3 tries.
+  ------
+                                                             ANSWER  NEXT SCREEN                                           Next
+Didn't get it? Resend code                                      Answer
+                                                                                                                           S4 · Location
+                                                               Code verified, new request                                  S5 · Vehicle
+                                                               Code verified, existing or cancel                           R · MISSING_INFO
+                                                               Code fails 3 times
+
+                                                             ANSWER  PRICE
+
+                                                             No price effect.
+
+                    Verify and continue                                         S2 · Contact and phone check                                                        Page 6 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 4 of 9  Roadside help                               S4 · LOCATION (includes S4A, pin confirmation)
+
+Where is your vehicle?                                   Vehicle location
+
+An exact location gets help to you faster.               Shown when: new request, after S2. Replaces the script's "repeat the location back" step with a map pin the
+               Use my current location                   customer confirms.
+
+Street address and city                                  ANSWER  NEXT SCREEN                Next
+                                                            Answer
+  e.g. 1200 N Federal Hwy, Hollywood, FL                                                    S5 · Vehicle
+                                                           Address found and pin confirmed
+Landmarks (optional)
+                                                         Address not found                  Stay on S4: "We couldn't find that address. Add the city or a cross street."
+  Near the Shell station, northbound lane
+                                                         Pin moved                          Address updates from the pin; customer confirms again
+
+                                                         I can't give a location            R · MISSING_INFO
+
+                                                         ANSWER  PRICE      Rule
+                                                            Effect
+
+Map · drag the pin to the exact spot                     Day or night       The pin sets the vehicle's time zone. Local time between DAY_START and DAY_END = day
+                                                         rate               rate, otherwise night.
+
+                                                         Tow pickup         Becomes the default pickup address on W1. It does not set tow miles.
+
+                  Yes, my vehicle is here                                         S4 · Vehicle location                                            Page 7 of 20
+
+             I can't give a location · Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 5 of 9            Roadside help                   S5 · VEHICLE (includes S5A, size check)
+
+What are you driving?                                  Vehicle
+
+Year                                                   Shown when: after S4 (new request) or after S2 (existing or cancel). The size question replaces V02's live weight
+                                                       search: anything over 10,000 lbs goes to the heavy-duty team.
+   2019
+                                                       ANSWER  NEXT SCREEN                                 Next
+Make                                                      Answer
+
+   Honda                                               Year, make, model filled · size = No · new request  S6 · Service
+
+Model                                                  Size = Yes                                          R · HEAVY_DUTY
+
+   CR-V                                                Existing request                                    R · EXISTING_JOB
+
+                                                       Cancel request                                      R · CANCEL_JOB
+
+Is it a box truck, RV, bus, or bigger than a           I don't know my vehicle                             R · MISSING_INFO
+1-ton pickup?
+                                                       Optional for the developer: a VIN or make/model lookup that returns vehicle weight can answer the size question
+                                                       automatically.
+
+Yes          No
+
+                                                       ANSWER  PRICE
+
+                                                       No price effect for regular vehicles. Heavy-duty vehicles are never quoted in the app.
+
+                            Continue                                            S5 · Vehicle                                                   Page 8 of 20
+
+           I don't know my vehicle · Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 6 of 9                                   Roadside help  S6 · SERVICE
+
+What do you need help with?                                  Service choice
+
+                                                             Shown when: after S5, new request, regular vehicle. One choice; it decides which question screen comes next and
+                                                             which formula prices the job.
+
+Jump start        Flat tire                                  ANSWER  NEXT SCREEN  PRICE FORMULA
+
+Dead battery      Change or new tire                         Answer             Next                  Formula (keys on Prices board)
+
+                                                             Jump start         J1                    rate(JS_1) or JS_n
+                                                                                                      rate(TIRE), + tire, or tow
+Locked out        Tow                                        Flat tire          T1                    rate(LOCKOUT)
+                                                                                                      hook + miles × tow rate
+Keys inside       Move my vehicle                            Locked out         L1                    GAS_BASE + fuel
+                                                                                                      rate(MECH)
+                                                             Tow                W1  W2                WINCH_BASE + steps
+                                                                                                      Not quoted
+Out of gas        Mechanic check                             Out of gas         G1
+
+Fuel delivery     Something's wrong                          Mechanic check     M1
+
+                                                             Stuck (winch-out)  X1
+
+Stuck             Something else                             Something else     R · UNLISTED_SERVICE
+
+Mud, sand, ditch  Talk to a specialist
+
+                                                             rate(X) = X_DAY or X_NIGHT , chosen by the vehicle's local time (from S4).
+
+                            Continue                                            S6 · Service choice                                      Page 9 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 7 of 9                                   Jump start  J1 · JUMP START
+
+How many batteries need a                                 Jump start                                         Next
+jump?
+                                                          Shown when: S6 = Jump start. Sets battery_count .  S7 · Quote
+Most cars have one. Some trucks and RVs have                                                                 R · OVER_LIMIT
+two or more.                                              ANSWER  NEXT SCREEN
+                                                             Answer
+1 battery                                     $150
+                                                            1 to JS_MAX_BATTERIES (4)
+                                                            More than 4
+
+2 batteries                                   $229        ANSWER  PRICE
+
+                                                          Answer         Key                                 Day             Night
+
+3 batteries                                   $265        1 battery      JS_1_DAY / JS_1_NIGHT               $150            $200
+
+                                                          2 batteries    JS_2                                $229            $229
+
+4 batteries                                   $295
+
+                                                          3 batteries    JS_3                                $265            $265
+
+   More than 4                                            4 batteries    JS_4                                $295            $295
+Prices shown at the day rate. Example: 2:00 PM.
+                                                          V02 gives no night price for 2-4 batteries, so the same price applies day and night until you decide otherwise.
+
+                        See my quote                                     J1 · Jump start                                     Page 10 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 7 of 9                                   Flat tire  T1 · FLAT TIRE (V02 III.A)
+
+How should we handle the                                 Flat tire
+tire?
+                                                         Shown when: S6 = Flat tire. The first answer decides the real service: tire change, tire replacement, or tow.
+   I have a usable spare. Change it.
+                                                         ANSWER  NEXT SCREEN                       Service set    Next
+                                                            Answers
+                                                                                                   tire_change    S7 · Quote
+                                                            Spare + 1 tire
+
+Bring me a new tire                                      New tire + 1 tire                         tire_replace   S7 · Quote
+
+                                                         Spare or new + 2 or more                  --             R · OVER_LIMIT
+
+Just tow my car                                          Just tow my car                           tow            W1 · Tow addresses
+
+How many tires are damaged?                              "How many tires" is hidden when the customer picks tow.
+
+1                               2 or more                ANSWER  PRICE
+                                                            Service
+Tire size (on the tire's side)                                                     Formula                        Day             Night
+                                                            Tire change             rate(TIRE)
+  e.g. 225/65R17                                                                                                  $165            $200
+
+                                                         Tire replacement          rate(TIRE) + cost of tire      $165 + tire     $200 + tire
+
+Shown only for "Bring me a new tire".                    Tow                       Tow formula on W2              Priced on W2
+
+                                                         The app never prices the tire itself. The quote shows "+ cost of tire, confirmed by the dispatcher", who uses the tire size.
+
+                        See my quote                                               T1 · Flat tire                                                                       Page 11 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 7 of 9                                   Locked out  L1 · LOCKOUT
+
+Is a child or pet locked inside?                          Lockout
+
+If yes, call 911 now. They can get there faster. You      Shown when: S6 = Locked out. A safety question only; the service and price are fixed.
+can still request help here.
+                                                          ANSWER  NEXT SCREEN
+   Yes
+                                                          Answer  Next
+
+                                                          No      S7 · Quote
+
+                                                          Yes     911 notice ("Call 911" / "Continue"), then S7 · Quote. Flag the job as urgent for the dispatcher.
+
+No
+
+                                                          ANSWER  PRICE        Formula           Day                                             Night
+                                                             Answer
+                                                                                                 $150                                            $200
+                                                          Either               rate(LOCKOUT)
+
+                                                          The answer does not change the price.
+
+                        See my quote                                           L1 · Lockout                                                             Page 12 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 7 of 9                                   Tow · 1 of 2  W1 · TOW ADDRESSES
+
+Where should we tow it?                                     Tow pickup and drop-off
+
+Pickup (your vehicle's location)                            Shown when: S6 = Tow, or T1 = "Just tow my car". Pickup is prefilled from S4 and can be changed.
+
+  1200 N Federal Hwy, Hollywood Change                      ANSWER  NEXT SCREEN         Next
+                                                               Answer
+Drop-off address                                                                        W2 · Tow miles and neutral
+                                                              Drop-off address entered  Stay on W1: "Enter where you want the vehicle towed."
+  Street, city                                                Drop-off empty
+
+Drop-off name (optional)                                    Pickup changed              Back to S4 to confirm the new pin, then return here
+
+  e.g. Joe's Auto Repair, home                              ANSWER  PRICE
+
+We share both addresses with the driver. You'll             No price effect. The addresses go to the dispatcher and driver only. The app does not calculate the distance
+enter the distance on the next screen.                      between them. Tow miles come from the number the customer types on W2.
+
+                            Continue                                        W1 · Tow pickup and drop-off                                                      Page 13 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 7 of 9                            Tow · 2 of 2    W2 · TOW MILES AND NEUTRAL
+
+How many miles from pickup to                          Tow miles and neutral
+drop-off?
+                                                       Shown when: after W1. Tow miles come only from the number the customer types here. The app does not calculate
+                                                       them from the addresses.
+
+                                                       ANSWER  NEXT SCREEN
+
+12.5                                   miles           Answer                                              Next
+
+                                                       Miles > 0 and  TOW_MAX_MI (100), neutral answered   S7 · Quote
+
+Your best estimate. Check your maps app if you're not  Miles empty, 0 or not a number                      Stay: "Enter the distance in miles."
+sure. The driver confirms the final mileage.
+                                                       Miles > TOW_MAX_MI                                  R · OVER_LIMIT
+Can the car be put in neutral?
+
+                                                       ANSWER  PRICE
+
+Yes                                                    miles     = round up (miles typed)        12.5  13
+                                                       rate
+                                                       hook      = miles  TOW_THRESHOLD_MI ? TOW_RATE_SHORT : TOW_RATE_LONG
+                                                       total
+No                                                               = neutral = Yes ? TOW_HOOK_NEUTRAL_OK : TOW_HOOK_NEUTRAL_FAIL
+
+                                                                 = hook + miles × rate
+
+Not sure                                               Neutral              Hook fee                       Miles (rounded up)   Rate
+
+Tow estimate                           $273.00         Yes                  $169                           1-20                 $8/mi, all miles
+                                                       No                   $189                           21-100               $10/mi, all miles
+                                                       Not sure             $189                           Over 100             Hand-off
+
+                                                       Customer types                  Neutral            Calculation           Total
+
+                                                       12.5 mi                         Yes                $169 + 13 × $8        $273.00
+                                                       20 mi                           Yes                $169 + 20 × $8        $329.00
+                                                       20.2 mi                         Yes                $169 + 21 × $10       $379.00
+                                                       34 mi                           Not sure           $189 + 34 × $10       $529.00
+
+              See my quote
+
+              Talk to a person
+
+Roadside Quote App · Screen Flow v1.0                                       W2 · Tow miles and neutral                                   Page 14 of 20
+Step 7 of 9                               Out of gas  G1 · OUT OF GAS
+
+What fuel does your vehicle                           Out of gas
+take?
+                                                      Shown when: S6 = Out of gas. The gallons question appears once a fuel type is chosen.
+  Regular gasoline
+                                                      ANSWER  NEXT SCREEN                              Next
+                                                         Answer
+                                                                                                       S7 · Quote
+                                                         Regular gasoline + gallons
+
+Diesel                                                Diesel                                           R · UNLISTED_SERVICE
+
+                                                      Not sure                                         R · UNLISTED_SERVICE
+
+Not sure
+
+How many gallons do you need?                         ANSWER  PRICE
+
+                                                         total = GAS_BASE + gallons × GAS_PRICE_PER_GAL
+                                                                       + GAS_RATE_PER_MI per delivery mile over GAS_INCLUDED_MI (confirmed by dispatcher)
+
+1            2  3                         5
+
+                                                      Gallons                        Calculation                                             Quoted
+
+Enough to reach the nearest gas station.              1                              $199 + 1 × $4.00                                        $203.00
+
+                                                      2                              $199 + 2 × $4.00                                        $207.00
+
+                                                      3                              $199 + 3 × $4.00                                        $211.00
+
+                                                      5                              $199 + 5 × $4.00                                        $219.00
+
+                                                      The customer can't know how far the gas has to travel, so the quote shows "+ $5 per mile beyond the first 5 delivery
+                                                      miles, confirmed by the dispatcher". Same price day and night.
+
+                See my quote
+
+                Talk to a person
+
+Roadside Quote App · Screen Flow v1.0                                                G1 · Out of gas                                                  Page 15 of 20
+Step 7 of 9                                   Mechanic check  M1 · MECHANIC CHECK
+
+What's going on with the                                      Mechanic check
+vehicle?
+                                                              Shown when: S6 = Mechanic check. Answers are notes for the mechanic.
+Won't start    Warning light                                                                                                            Next
+                                                              ANSWER  NEXT SCREEN
+                                                                 Answer                                                                 S7 · Quote
+
+                                                                Any choice, text optional
+
+Strange noise  Overheating                    Other
+
+                                                              ANSWER  PRICE
+
+Describe it (optional)                                        Answer         Formula              Day                                               Night
+
+  It clicks when I turn the key                               Any            rate(MECH)           $150                                              $300
+
+                                                              The answers do not change the price. The fee covers the assessment only.
+
+A mechanic will assess the problem on site. Repairs
+are quoted separately.
+
+                        See my quote                                         M1 · Mechanic check                                                           Page 16 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 7 of 9                                   Stuck · winch-out  X1 · WINCH-OUT (V02 III.G)
+
+Is the vehicle on its wheels?                                    Winch-out
+
+  Yes On its side Upside                                         Shown when: S6 = Stuck. Distance questions appear only when the vehicle is on its wheels.
+                                               down
+                                                                 ANSWER  NEXT SCREEN
+
+About how far is it from the pavement?                           Answer                                          Next
+
+                                                                 On its wheels + distance entered                S7 · Quote
+
+                                                                 On its side or upside down                      R · WINCH_SPECIALIST
+
+14                                                   feet
+
+                                                                 Distance empty                                  Stay: "Enter an estimate in feet."
+
+A parking space is about 18 feet long.
+
+Which wheels are stuck?                                          ANSWER  PRICE
+
+Front left               Front right                                steps = max(0, round up((feet - WINCH_INCLUDED_FT) ÷ WINCH_STEP_FT))
+                                                                    total = WINCH_BASE + steps × WINCH_STEP_PRICE
+
+Rear left                Rear right                              Feet from pavement                          Extra steps                                       Total
+
+                                                                 0-10                                        0                                                 $285
+
+                                                                 11-20                                       1                                                 $385
+
+                                                                 21-30                                       2                                                 $485
+
+                                                                 Each extra 10 ft                            +1                                                +$100
+
+                                                                 Stuck wheels are passed to the driver and do not change the price. Same price day and night.
+
+                        See my quote                                                         X1 · Winch-out                                                           Page 17 of 20
+
+                            Talk to a person
+
+Roadside Quote App · Screen Flow v1.0
+Step 8 of 9                                Your quote    S7 · QUOTE SUMMARY
+
+Here's your quote, Maria                                 Quote summary
+
+                                                         Shown when: the last service screen is complete. Replaces V02 steps 7-9. Example shown: tow, day rate.
+
+Vehicle                        2019 Honda CR-V           ANSWER  NEXT SCREEN
+
+Pickup                    1200 N Federal Hwy             Action                      Next
+
+Service                                    Tow, 12.5 mi  Accept and pay              S8A · Payment
+
+Rate                           Day (7 AM-7 PM)           Pay by phone instead        R · PAY_BY_PHONE
+
+Hook fee (neutral works)                   $169.00       No thanks                   Thank-you screen: "Thanks for checking with us. Come back any time." Quote
+Mileage, 13 mi × $8                        $104.00                                   saved as declined.
+
+                                                         Edit details (tap any row)  That screen, then back here with a new total
+
+Total                                      $273.00       Open longer than            Recalculate and show the new total before payment
+
+Final mileage is confirmed by the driver.                 QUOTE_VALID_MIN
+
+Anything else we should know?                            ANSWER  PRICE: LINE ITEMS BY SERVICE
+
+Optional                                                 Service                           Line items shown
+
+                                                         Jump, lockout, mechanic, tire change One service fee, day or night
+
+                                                         Tire replacement                  Service fee + "cost of tire, confirmed by dispatcher"
+
+                                                         Tow                               Hook fee + mileage (miles typed × rate)
+
+                                                         Gas                               Base + fuel + "delivery miles over 5 at $5/mi, confirmed by dispatcher"
+
+                                                         Winch-out                         Base + extra distance steps
+
+                                                         The quote stores its line items, total, day/night period and price table version.
+
+                Accept and pay
+             Pay by phone instead
+
+             No thanks · Edit details
+
+Roadside Quote App · Screen Flow v1.0                                                S7 · Quote summary                                                          Page 18 of 20
+Step 9 of 9                                    Payment  S8A · PAYMENT (V02 step 10)
+
+Pay $273.00                                             Payment
+
+                                                        Shown when: S7 = Accept and pay. The ETA and refund texts are config strings ( MSG_ETA , MSG_REFUND ), editable
+                                                        without code changes.
+
+                                                        ANSWER  NEXT SCREEN
+
+                                                        Result         Next
+
+Secure payment form from the payment                    Payment        Confirmation screen: "Paid. A dispatcher will call you shortly to confirm the arrival time."
+ provider (card, Apple Pay, Google Pay)                 succeeds       Order created, dispatcher notified, receipt texted.
+
+                                                        Payment fails  Stay: card error from provider, try again
+
+                                                        Pay by phone   R · PAY_BY_PHONE
+                                                        instead
+  When will help arrive? After payment, your job
+  goes to a dispatcher, who calls you with the          ANSWER  PRICE
+  arrival time and details.
+                                                        Charges the S7 total exactly. Items marked "confirmed by dispatcher" (tire cost, gas delivery miles, any tow
+  Can I cancel? We take payment first. If the           mileage difference) are charged separately after the dispatcher confirms them.
+  details from the dispatcher don't work for you,
+  you can cancel for a full refund.
+
+We'll also text the receipt to (555) 555-0100.
+
+                         Pay $273.00                                         S8A · Payment                        Page 19 of 20
+
+                         Pay by phone instead
+
+Roadside Quote App · Screen Flow v1.0
+Roadside help  Dispatcher                                R · HAND-OFF TO A PERSON (V02 transfer rules)
+
+Our heavy-duty team will help                            Hand-off to a person
+you
+                                                         Shown when: any screen raises a reason code. The app stops, saves everything collected as a lead with the code, and
+Larger vehicles are handled by a specialized             offers a call or callback.
+team. We've saved your details so you won't
+need to repeat them.                                     Code              Raised on   Headline shown                                        Team
+
+                  (555) 555-0199                         USER_REQUEST      Any screen  A dispatcher will help you                            Dispatcher
+                                                         EXISTING_JOB      S1  S5      The agent on your job will contact you shortly        Job owner
+                                                         CANCEL_JOB        S1  S5      We'll call you about cancellation and refund options  Job owner
+                                                         MISSING_INFO      S2, S4, S5  A dispatcher will help you finish your request        Dispatcher
+                                                         HEAVY_DUTY        S5          Our heavy-duty team will help you                     Heavy-duty team
+                                                         UNLISTED_SERVICE  S6, G1      Our specialist team handles this service              Specialist
+                                                         WINCH_SPECIALIST  X1          A specialist will call you back shortly               Specialist (callback only)
+                                                         OVER_LIMIT        J1, T1, W2  A dispatcher will confirm this job with you           Dispatcher
+                                                         PAY_BY_PHONE      S7, S8A     An agent will take your payment by phone              Dispatcher
+
+                                                         ANSWER  PRICE
+
+                                                         No price is shown for any hand-off. For PAY_BY_PHONE the quoted total is passed to the agent with the lead.
+
+                            Call now                                       R · Hand-off to a person                                          Page 20 of 20
+                       Request a callback
+
+          Message and team change with the reason code.
+                          Example: HEAVY_DUTY.
+
+Roadside Quote App · Screen Flow v1.0
+

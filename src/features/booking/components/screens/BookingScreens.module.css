@@ -1,0 +1,103 @@
+.stack {
+  @apply grid gap-5;
+}
+
+.twoColumn {
+  @apply grid gap-4 sm:grid-cols-2;
+}
+
+.threeColumn {
+  @apply grid gap-4 sm:grid-cols-3;
+}
+
+.inlineInfo {
+  @apply flex items-start gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600;
+}
+
+.successInfo {
+  @apply flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-sm font-bold text-emerald-800;
+}
+
+.warningInfo {
+  @apply rounded-2xl border border-solid border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950;
+}
+
+.verificationRow {
+  @apply grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end;
+}
+
+.smallButton {
+  @apply min-h-12 rounded-xl border border-solid border-slate-300 bg-white px-5 text-sm font-bold text-slate-700;
+}
+
+.linkButton {
+  @apply w-fit border-0 bg-transparent p-0 text-sm font-bold text-brand-700 underline underline-offset-4;
+}
+
+.sectionLabel {
+  @apply m-0 text-lg font-extrabold text-slate-950;
+}
+
+.summaryList {
+  @apply m-0 grid divide-y divide-slate-100 rounded-2xl border border-solid border-slate-200 bg-white;
+}
+
+.summaryRow {
+  @apply grid grid-cols-[7rem_1fr_auto] items-center gap-3 px-4 py-4 text-sm;
+}
+
+.summaryLabel {
+  @apply font-semibold text-slate-500;
+}
+
+.summaryValue {
+  @apply font-bold text-slate-900;
+}
+
+.editButton {
+  @apply min-h-9 rounded-lg border-0 bg-slate-100 px-3 text-xs font-bold text-slate-700;
+}
+
+.quoteBox {
+  @apply overflow-hidden rounded-2xl border border-solid border-slate-200 bg-slate-50;
+}
+
+.quoteLine {
+  @apply flex items-center justify-between gap-4 px-5 py-3 text-sm text-slate-700;
+}
+
+.quoteTotal {
+  @apply flex items-center justify-between gap-4 border-0 border-t border-solid border-slate-200 bg-white px-5 py-5 text-xl font-extrabold text-slate-950;
+}
+
+.prototypeTag {
+  @apply inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900;
+}
+
+.paymentPlaceholder {
+  @apply grid min-h-44 place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-slate-500;
+}
+
+.handoffHeader {
+  @apply flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-700;
+}
+
+.teamPill {
+  @apply inline-flex w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-600;
+}
+
+.phoneLink {
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 font-bold text-white;
+}
+
+.errorPanel {
+  @apply rounded-2xl border border-solid border-red-200 bg-red-50 p-4 text-sm text-red-900;
+}
+
+.loadingQuote {
+  @apply grid gap-3;
+}
+
+.loadingLine {
+  @apply h-12 animate-pulse rounded-xl bg-slate-200;
+}

@@ -1,0 +1,27 @@
+.shell {
+  @apply min-h-screen bg-canvas;
+}
+
+.header {
+  @apply border-0 border-b border-solid border-slate-200 bg-white;
+}
+
+.headerInner {
+  @apply mx-auto flex min-h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8;
+}
+
+.brand {
+  @apply text-lg font-bold tracking-tight text-brand-950;
+}
+
+.nav {
+  @apply flex items-center gap-5 text-sm font-semibold text-slate-600;
+}
+
+.main {
+  @apply mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8;
+}
+
+.footer {
+  @apply mx-auto max-w-6xl px-4 py-8 text-sm text-slate-500 sm:px-6 lg:px-8;
+}
