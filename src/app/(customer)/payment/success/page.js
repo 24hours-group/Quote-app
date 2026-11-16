@@ -1,20 +1,22 @@
+import { Suspense } from 'react';
 import { Alert, Typography } from '@mui/material';
+import { PaymentReturnStatus } from '@/features/payment/components/PaymentReturnStatus';
 
 export const metadata = {
-  title: 'Payment return',
+  title: 'Payment verification',
 };
 
 export default function PaymentSuccessPage() {
   return (
     <section>
       <Typography component="h1" gutterBottom variant="h4">
-        Payment return
+        Verifying payment
       </Typography>
-      <Alert severity="info">
-        Stripe checkout and payment verification are not implemented in this
-        foundation release. Future payment status will be verified server-side;
-        this return URL will not be treated as proof of payment.
-      </Alert>
+      <Suspense
+        fallback={<Alert severity="info">Checking payment status…</Alert>}
+      >
+        <PaymentReturnStatus />
+      </Suspense>
     </section>
   );
 }

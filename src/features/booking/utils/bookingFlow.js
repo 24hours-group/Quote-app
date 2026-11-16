@@ -67,9 +67,18 @@ const validationRules = {
   fullName: (value) =>
     typeof value === 'string' &&
     value.trim().split(/\s+/).filter(Boolean).length >= 2,
-  usMobile: (value) =>
+  usMobile: (value) => {
+    if (typeof value !== 'string' || /[a-z]/i.test(value)) return false;
+    const digits = value.replace(/\D/g, '');
+    const national =
+      digits.length === 11 && digits.startsWith('1') ? digits.slice(1) : digits;
+    return /^[2-9]\d{2}[2-9]\d{6}$/.test(national);
+  },
+  email: (value) =>
     typeof value === 'string' &&
-    value.replace(/\D/g, '').replace(/^1/, '').length === 10,
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim()),
+  bookingReference: (value) =>
+    typeof value === 'string' && /^RS-[A-Z0-9]{8,20}$/.test(value.trim()),
   true: (value) => value === true,
   positiveNumber: (value) =>
     Number.isFinite(Number(value)) && Number(value) > 0,
@@ -144,9 +153,17 @@ function resolveTransition(config, transitionConfig, answers) {
   }
 
   if (transitionConfig.type === 'validation') {
+    const errors = transitionConfig.field
+      ? [
+          {
+            field: transitionConfig.field,
+            message: transitionConfig.message,
+          },
+        ]
+      : [];
     return validationTransition(
       config.id,
-      [],
+      errors,
       transitionConfig.code,
       transitionConfig.message,
     );
@@ -222,8 +239,9 @@ export function getNextTransition(screenId, answers = {}) {
   }
 
   const canBypassValidation =
-    transitionConfig.bypassValidation ||
-    transitionConfig.reasonCode ||
+    transitionConfig.bypassValidation === true ||
+    (transitionConfig.reasonCode &&
+      transitionConfig.bypassValidation !== false) ||
     transitionConfig.type === 'validation' ||
     transitionConfig.type === 'stay';
   if (errors.length && !canBypassValidation) {
@@ -254,6 +272,8 @@ export function getVisibleFlow(answers = {}) {
       flow.push('W1', 'W2', 'S7', 'S8A');
     } else if (serviceScreenId) {
       flow.push(serviceScreenId, 'S7', 'S8A');
+    } else if (serviceType === 'other' && answers.mechanicIssue) {
+      flow.push('M1', 'S7', 'S8A');
     } else if (serviceType === 'other') {
       flow.push('R');
     }
@@ -290,6 +310,10 @@ export function getStepProgress(screenId, answers = {}) {
 
 export function getScreenConfig(screenId) {
   return screenConfigs[screenId] ?? null;
+}
+
+export function getScreenLabel(screenId) {
+  return getScreenConfig(screenId)?.title ?? 'Booking details';
 }
 
 export function isQuoteEditScreen(screenId) {

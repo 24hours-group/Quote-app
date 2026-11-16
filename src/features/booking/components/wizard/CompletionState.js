@@ -2,9 +2,13 @@ import { CheckCircle2 } from 'lucide-react';
 import styles from './BookingWizard.module.css';
 
 const messages = {
+  simulated_paid: {
+    title: 'Payment completed',
+    copy: 'Your payment has been submitted for verification. Once verified, your booking will be confirmed and sent to the dispatch team. Keep your phone available for service updates.',
+  },
   paid: {
     title: 'Payment confirmed',
-    copy: 'A dispatcher will call you shortly to confirm the arrival time. Your demo reference is RS-DEMO-2401.',
+    copy: 'Your payment was verified. Use the booking reference on your confirmation while the dispatch team coordinates the next steps.',
   },
   declined: {
     title: 'Thanks for checking with us',
@@ -12,11 +16,11 @@ const messages = {
   },
   call_now: {
     title: 'Call when you’re ready',
-    copy: 'Your details are saved for the roadside team. Use the support number shown on the previous screen.',
+    copy: 'Your details are saved for the roadside team. Calling does not confirm service availability, payment, or a refund.',
   },
   request_callback: {
     title: 'Callback requested',
-    copy: 'Your details are saved. The appropriate roadside team will call you shortly.',
+    copy: 'Your callback request is queued with the appropriate roadside team. Keep your phone available for follow-up.',
   },
 };
 

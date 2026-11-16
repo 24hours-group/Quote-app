@@ -1,4 +1,4 @@
-import { ArrowRight, Headphones } from 'lucide-react';
+import { ArrowRight, Headphones, LoaderCircle } from 'lucide-react';
 import styles from './BookingWizard.module.css';
 
 export function WizardActions({
@@ -14,13 +14,27 @@ export function WizardActions({
       <div className={styles.actions}>
         <div className={styles.actionsInner}>
           <button
+            aria-busy={isLoading}
             className={styles.primaryAction}
             disabled={isLoading}
             onClick={onContinue}
             type="button"
           >
-            {isLoading ? 'Please wait…' : primaryLabel}
-            {!isLoading ? <ArrowRight size={18} /> : null}
+            {isLoading ? (
+              <>
+                <LoaderCircle
+                  aria-hidden="true"
+                  className={styles.spinner}
+                  size={18}
+                />
+                Continuing…
+              </>
+            ) : (
+              <>
+                {primaryLabel}
+                <ArrowRight aria-hidden="true" size={18} />
+              </>
+            )}
           </button>
           {showHandoff ? (
             <button

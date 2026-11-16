@@ -1,0 +1,136 @@
+.container {
+  @apply rounded-2xl border border-slate-200 bg-white p-5 shadow-sm;
+}
+
+.topBar {
+  @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100;
+}
+
+.titleArea {
+  @apply flex flex-col;
+}
+
+.title {
+  @apply text-lg font-bold text-slate-900;
+}
+
+.subtitle {
+  @apply text-xs text-slate-500 mt-0.5;
+}
+
+.topActions {
+  @apply flex items-center gap-2;
+}
+
+.inviteButton {
+  @apply inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-blue-700 transition duration-150 cursor-pointer select-none active:scale-95;
+}
+
+.refreshButton {
+  @apply inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition duration-150 cursor-pointer;
+}
+
+.filterBar {
+  @apply flex items-center gap-3 py-3 border-b border-slate-100;
+}
+
+.searchInput {
+  @apply w-full max-w-xs rounded-xl border border-slate-200 bg-slate-50/50 px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition;
+}
+
+.tableWrap {
+  @apply overflow-x-auto mt-2;
+}
+
+.table {
+  @apply w-full border-collapse text-left text-xs;
+}
+
+.th {
+  @apply border-b border-slate-200 bg-slate-50/80 px-3.5 py-3 text-[11px] font-bold uppercase tracking-wider text-slate-500 whitespace-nowrap;
+}
+
+.tr {
+  @apply border-b border-slate-100 hover:bg-slate-50/50 transition duration-100;
+}
+
+.td {
+  @apply px-3.5 py-3 align-middle text-slate-700 whitespace-nowrap;
+}
+
+.userCell {
+  @apply flex items-center gap-3;
+}
+
+.avatar {
+  @apply flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-black text-blue-700 border border-blue-200;
+}
+
+.userInfo {
+  @apply flex flex-col;
+}
+
+.userName {
+  @apply font-bold text-slate-900;
+}
+
+.userEmail {
+  @apply text-[11px] text-slate-500;
+}
+
+.badgeSuperAdmin {
+  @apply inline-flex items-center gap-1 rounded-md bg-purple-50 px-2 py-0.5 text-[11px] font-bold text-purple-700 border border-purple-200;
+}
+
+.badgeOps {
+  @apply inline-flex items-center gap-1 rounded-md bg-blue-50 px-2 py-0.5 text-[11px] font-bold text-blue-700 border border-blue-200;
+}
+
+.badgeDispatcher {
+  @apply inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700 border border-emerald-200;
+}
+
+.badgeFinance {
+  @apply inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700 border border-amber-200;
+}
+
+.badgeSupport {
+  @apply inline-flex items-center gap-1 rounded-md bg-cyan-50 px-2 py-0.5 text-[11px] font-bold text-cyan-700 border border-cyan-200;
+}
+
+.statusActive {
+  @apply inline-flex items-center gap-1 rounded-md bg-emerald-50 px-2 py-0.5 text-[11px] font-bold text-emerald-700;
+}
+
+.statusPending {
+  @apply inline-flex items-center gap-1 rounded-md bg-amber-50 px-2 py-0.5 text-[11px] font-bold text-amber-700;
+}
+
+.statusDeactivated {
+  @apply inline-flex items-center gap-1 rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-bold text-slate-500;
+}
+
+.actionsCell {
+  @apply flex items-center gap-2;
+}
+
+.roleSelect {
+  @apply rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 focus:border-blue-500 focus:outline-none transition;
+}
+
+.actionButton {
+  @apply rounded-lg border border-slate-200 px-2.5 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition duration-150 cursor-pointer disabled:opacity-50 select-none;
+}
+
+.resendButton {
+  @apply inline-flex items-center gap-1 rounded-lg bg-blue-50 border border-blue-200 px-2.5 py-1 text-xs font-bold text-blue-700 hover:bg-blue-100 transition duration-150 cursor-pointer select-none;
+}
+
+.emptyState {
+  @apply py-12 text-center text-xs text-slate-400 font-medium;
+}
+
+.loadingState {
+  @apply py-12 flex flex-col items-center justify-center gap-2 text-xs font-semibold text-slate-500;
+}
+

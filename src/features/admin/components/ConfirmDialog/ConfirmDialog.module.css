@@ -1,0 +1,64 @@
+.overlay {
+  @apply fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4 overflow-y-auto;
+}
+
+.modal {
+  @apply relative w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-200/90 overflow-hidden;
+}
+
+.headerRow {
+  @apply flex items-start gap-3.5;
+}
+
+.iconWrapperDanger {
+  @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-rose-100 text-rose-600;
+}
+
+.iconWrapperWarning {
+  @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600;
+}
+
+.iconWrapperInfo {
+  @apply flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600;
+}
+
+.content {
+  @apply flex flex-col gap-1.5 flex-1;
+}
+
+.title {
+  @apply text-base font-bold text-slate-900 leading-tight;
+}
+
+.description {
+  @apply text-xs text-slate-500 leading-relaxed;
+}
+
+.closeButton {
+  @apply -mt-1 -mr-1 rounded-lg p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition duration-150 cursor-pointer;
+}
+
+.footer {
+  @apply flex items-center justify-end gap-2.5 pt-5 mt-5 border-t border-slate-100;
+}
+
+.cancelButton {
+  @apply inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-50 cursor-pointer;
+}
+
+.confirmButtonDanger {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-xl bg-rose-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-rose-700 disabled:opacity-50 cursor-pointer;
+}
+
+.confirmButtonWarning {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-xl bg-amber-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-amber-700 disabled:opacity-50 cursor-pointer;
+}
+
+.confirmButtonPrimary {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50 cursor-pointer;
+}
+
+.spinner {
+  @apply animate-spin;
+}
+

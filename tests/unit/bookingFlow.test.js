@@ -7,6 +7,7 @@ import {
 import {
   getNextTransition,
   getScreenConfig,
+  getScreenLabel,
   getStepProgress,
   getVisibleFlow,
   isQuoteEditScreen,
@@ -14,9 +15,9 @@ import {
 
 const validContact = {
   fullName: 'Maria Santos',
+  receiptEmail: 'maria@example.com',
   mobileNumber: '(555) 555-0100',
-  textConsent: true,
-  codeStatus: 'verified',
+  contactAttached: true,
 };
 const validVehicle = {
   year: 2019,
@@ -74,6 +75,14 @@ describe('booking flow configuration', () => {
       /total\s*=|priceCalculation/i,
     );
   });
+
+  it('uses customer-facing labels instead of internal screen IDs', () => {
+    expect(getScreenLabel('S0')).toBe('Safety check');
+    expect(getScreenLabel('S1')).toBe('Request type');
+    expect(getScreenLabel('S8A')).toBe('Payment');
+    expect(getScreenLabel('R')).toBe('Contact support');
+    expect(getScreenLabel('missing')).toBe('Booking details');
+  });
 });
 
 describe('entry, contact, location, and vehicle transitions', () => {
@@ -93,7 +102,7 @@ describe('entry, contact, location, and vehicle transitions', () => {
     },
   );
 
-  it('routes verified S2 contacts by request type', () => {
+  it('routes server-attached S2 contacts by request type', () => {
     expectScreen(
       getNextTransition('S2', { ...validContact, requestType: 'new' }),
       'S4',
@@ -108,16 +117,12 @@ describe('entry, contact, location, and vehicle transitions', () => {
     );
   });
 
-  it('hands off after three failed verification attempts', () => {
-    expectHandoff(
-      getNextTransition('S2', { codeStatus: 'failed', codeAttempts: 3 }),
-      HANDOFF_CODES.MISSING_INFO,
-    );
-  });
-
   it('handles every S4 result', () => {
     expectScreen(
-      getNextTransition('S4', { locationStatus: 'confirmed' }),
+      getNextTransition('S4', {
+        locationStatus: 'confirmed',
+        locationResolutionId: '3ed90ff8-57b2-49ac-bfb1-675f6d3f95f0',
+      }),
       'S5',
     );
     expectHandoff(
@@ -130,12 +135,25 @@ describe('entry, contact, location, and vehicle transitions', () => {
       type: 'validation',
       screenId: 'S4',
       code: 'ADDRESS_NOT_FOUND',
+      errors: [
+        {
+          field: 'locationStatus',
+          message:
+            "We couldn't find that address. Add the city or a cross street.",
+        },
+      ],
     });
     expect(
       getNextTransition('S4', { locationStatus: 'pin_moved' }),
     ).toMatchObject({
       type: 'validation',
       code: 'PIN_CONFIRMATION_REQUIRED',
+      errors: [
+        {
+          field: 'locationStatus',
+          message: 'Confirm the updated address and map pin.',
+        },
+      ],
     });
   });
 
@@ -145,13 +163,33 @@ describe('entry, contact, location, and vehicle transitions', () => {
       'S6',
     );
     expectHandoff(
-      getNextTransition('S5', { ...validVehicle, requestType: 'existing' }),
+      getNextTransition('S5', {
+        bookingReference: 'RS-1A2B3C4D5E',
+        requestType: 'existing',
+      }),
       HANDOFF_CODES.EXISTING_JOB,
     );
     expectHandoff(
-      getNextTransition('S5', { ...validVehicle, requestType: 'cancel' }),
+      getNextTransition('S5', {
+        bookingReference: 'RS-1A2B3C4D5E',
+        requestType: 'cancel',
+      }),
       HANDOFF_CODES.CANCEL_JOB,
     );
+    expect(
+      getNextTransition('S5', {
+        bookingReference: 'not-a-reference',
+        requestType: 'existing',
+      }),
+    ).toMatchObject({
+      type: 'validation',
+      errors: [
+        {
+          field: 'bookingReference',
+          message: 'Enter a valid reference, such as RS-1A2B3C4D5E.',
+        },
+      ],
+    });
     expectHandoff(
       getNextTransition('S5', { vehicleSize: 'heavy' }),
       HANDOFF_CODES.HEAVY_DUTY,
@@ -235,7 +273,10 @@ describe('service transitions', () => {
 
   it('validates W1 and models pickup-pin return behavior', () => {
     expectScreen(
-      getNextTransition('W1', { dropoffAddress: '100 Main St, Miami, FL' }),
+      getNextTransition('W1', {
+        dropoffResolutionId: 'b08d5dd2-a13b-4097-b5f7-eed513af00e1',
+        dropoffStatus: 'confirmed',
+      }),
       'W2',
     );
     expect(getNextTransition('W1', { pickupChanged: true })).toMatchObject({
@@ -248,20 +289,39 @@ describe('service transitions', () => {
   it.each(['yes', 'no', 'not_sure'])(
     'accepts W2 neutral=%s within the limit',
     (neutral) => {
-      expectScreen(getNextTransition('W2', { towMiles: 12.5, neutral }), 'S7');
+      expectScreen(
+        getNextTransition('W2', {
+          routeCalculationId: '6debfdb7-0de4-4fc5-93b4-c0818dc81d69',
+          routeStatus: 'ready',
+          routeBillableMiles: 13,
+          neutral,
+        }),
+        'S7',
+      );
     },
   );
 
-  it('validates bad W2 mileage and hands off over-limit towing', () => {
-    expect(
-      getNextTransition('W2', { towMiles: 0, neutral: 'yes' }),
-    ).toMatchObject({
+  it('requires a server route and hands off over-limit towing', () => {
+    expect(getNextTransition('W2', { neutral: 'yes' })).toMatchObject({
       type: 'validation',
       screenId: 'W2',
-      errors: [{ field: 'towMiles', message: 'Enter the distance in miles.' }],
+      errors: [
+        {
+          field: 'routeCalculationId',
+          message: 'Wait for the driving route to load.',
+        },
+        {
+          field: 'routeStatus',
+          message: 'Wait for the driving route to load.',
+        },
+      ],
     });
     expectHandoff(
-      getNextTransition('W2', { towMiles: 100.1, neutral: 'yes' }),
+      getNextTransition('W2', {
+        routeCalculationId: '6debfdb7-0de4-4fc5-93b4-c0818dc81d69',
+        routeStatus: 'ready',
+        routeBillableMiles: 101,
+      }),
       HANDOFF_CODES.OVER_LIMIT,
     );
   });
@@ -324,7 +384,9 @@ describe('quote, payment, handoff, and editing', () => {
   it('returns to S7 after a modeled detail edit', () => {
     expectScreen(
       getNextTransition('W2', {
-        towMiles: 20,
+        routeCalculationId: '6debfdb7-0de4-4fc5-93b4-c0818dc81d69',
+        routeStatus: 'ready',
+        routeBillableMiles: 20,
         neutral: 'no',
         editReturnTo: 'S7',
       }),
@@ -333,15 +395,33 @@ describe('quote, payment, handoff, and editing', () => {
     expectScreen(
       getNextTransition('S4', {
         locationStatus: 'confirmed',
+        locationResolutionId: '3ed90ff8-57b2-49ac-bfb1-675f6d3f95f0',
         editReturnTo: 'W1',
       }),
       'W1',
+    );
+    expectScreen(
+      getNextTransition('S2', {
+        contactAttached: true,
+        editReturnTo: 'R',
+        fullName: 'Maria Santos',
+        mobileNumber: '(212) 555-0100',
+        receiptEmail: 'maria@example.com',
+        requestType: 'new',
+      }),
+      'R',
     );
     expect(isQuoteEditScreen('W2')).toBe(true);
     expect(isQuoteEditScreen('S8A')).toBe(false);
   });
 
   it('handles every S8A payment result', () => {
+    expect(
+      getNextTransition('S8A', { paymentStatus: 'simulated' }),
+    ).toMatchObject({
+      type: 'complete',
+      outcome: 'simulated_paid',
+    });
     expect(
       getNextTransition('S8A', { paymentStatus: 'succeeded' }),
     ).toMatchObject({
@@ -382,10 +462,14 @@ describe('quote, payment, handoff, and editing', () => {
   it('covers every preserved handoff reason code', () => {
     const raisedCodes = new Set([
       getNextTransition('S0', { talkToPerson: true }).reasonCode,
-      getNextTransition('S5', { ...validVehicle, requestType: 'existing' })
-        .reasonCode,
-      getNextTransition('S5', { ...validVehicle, requestType: 'cancel' })
-        .reasonCode,
+      getNextTransition('S5', {
+        bookingReference: 'RS-1A2B3C4D5E',
+        requestType: 'existing',
+      }).reasonCode,
+      getNextTransition('S5', {
+        bookingReference: 'RS-1A2B3C4D5E',
+        requestType: 'cancel',
+      }).reasonCode,
       getNextTransition('S4', { locationStatus: 'unavailable' }).reasonCode,
       getNextTransition('S5', { vehicleSize: 'heavy' }).reasonCode,
       getNextTransition('S6', { serviceType: 'other' }).reasonCode,
@@ -411,15 +495,15 @@ describe('validation and visible progress', () => {
   it('reports field-level contact validation errors', () => {
     const transition = getNextTransition('S2', {
       fullName: 'Maria',
+      receiptEmail: 'invalid',
       mobileNumber: '123',
-      textConsent: false,
-      codeStatus: 'verified',
+      contactAttached: true,
       requestType: 'new',
     });
     expect(transition.errors.map(({ field }) => field)).toEqual([
       'fullName',
+      'receiptEmail',
       'mobileNumber',
-      'textConsent',
     ]);
   });
 

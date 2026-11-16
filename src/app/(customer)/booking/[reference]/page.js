@@ -1,31 +1,26 @@
-import { Chip, Stack, Typography } from '@mui/material';
-import { EmptyState } from '@/components/feedback/EmptyState';
-import { SurfaceCard } from '@/components/ui/SurfaceCard';
+import {
+  clearBookingSessionToken,
+  getBookingSessionToken,
+} from '@/features/booking/services/bookingSessionCookie';
+import { BookingConfirmation } from '@/features/payment/components/BookingConfirmation';
+import styles from './BookingStatusPage.module.css';
 
 export const metadata = {
-  title: 'Booking status',
+  title: 'Booking Confirmation | Townexa',
 };
 
 export default function BookingStatusPage({ params }) {
+  if (getBookingSessionToken()) {
+    try {
+      clearBookingSessionToken();
+    } catch {
+      // Ignored if response headers have already streamed
+    }
+  }
+
   return (
-    <Stack spacing={3}>
-      <div>
-        <Typography component="h1" gutterBottom variant="h4">
-          Booking status
-        </Typography>
-        <Chip label={`Reference: ${params.reference}`} variant="outlined" />
-      </div>
-      <SurfaceCard>
-        <Typography color="text.secondary">
-          Secure booking lookup will be connected to Supabase Auth and the
-          booking service in a later unit. A reference alone will never grant
-          access to customer data.
-        </Typography>
-      </SurfaceCard>
-      <EmptyState
-        description="No booking data is available in the architecture-only release."
-        title="Status unavailable"
-      />
-    </Stack>
+    <section className={styles.container}>
+      <BookingConfirmation reference={params.reference} />
+    </section>
   );
 }

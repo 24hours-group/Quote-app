@@ -1,0 +1,56 @@
+.container {
+  @apply mx-auto max-w-2xl rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-xl mt-6;
+}
+
+.header {
+  @apply flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-5;
+}
+
+.statusTitle {
+  @apply text-2xl font-black text-navy-950 tracking-tight flex items-center gap-2.5;
+}
+
+.iconBadge {
+  @apply inline-flex items-center justify-center rounded-2xl bg-emerald-50 p-2 text-emerald-600 border border-emerald-200/80;
+}
+
+.refChip {
+  @apply inline-flex items-center gap-1.5 rounded-xl bg-blue-50 border border-blue-200 px-3.5 py-1.5 text-xs font-extrabold text-blue-700 tracking-wide;
+}
+
+.alertBox {
+  @apply rounded-2xl bg-emerald-50 border border-emerald-200 p-4 text-sm text-emerald-900 leading-relaxed flex items-start gap-3 mt-5;
+}
+
+.alertIcon {
+  @apply text-emerald-600 shrink-0 mt-0.5;
+}
+
+.summaryCard {
+  @apply rounded-2xl border border-slate-200 bg-slate-50/70 p-5 mt-5 grid gap-3.5;
+}
+
+.summaryRow {
+  @apply flex items-center justify-between py-2 border-b border-slate-200/70 last:border-b-0 last:pb-0;
+}
+
+.label {
+  @apply text-xs font-bold uppercase tracking-wider text-slate-500;
+}
+
+.value {
+  @apply text-base font-extrabold text-navy-950;
+}
+
+.dispatchBadge {
+  @apply inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1 text-xs font-bold text-white shadow-sm capitalize;
+}
+
+.supportText {
+  @apply text-xs text-slate-500 text-center mt-6 leading-relaxed;
+}
+
+.errorBox {
+  @apply mx-auto max-w-2xl rounded-2xl bg-rose-50 border border-rose-200 p-5 text-sm font-semibold text-rose-800 mt-6;
+}
+

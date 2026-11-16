@@ -1,4 +1,5 @@
 import { ArrowLeft, Check, Cloud, CloudOff } from 'lucide-react';
+import { getScreenLabel } from '@/features/booking/utils/bookingFlow';
 import styles from './BookingWizard.module.css';
 
 export function WizardFrame({
@@ -8,12 +9,19 @@ export function WizardFrame({
   saveStatus,
   canGoBack,
   onBack,
+  isScreenLoading = false,
 }) {
   return (
     <div className={styles.wizard}>
       <div className={styles.topbar}>
         {canGoBack ? (
-          <button className={styles.backButton} onClick={onBack} type="button">
+          <button
+            aria-disabled={isScreenLoading}
+            className={styles.backButton}
+            disabled={isScreenLoading}
+            onClick={onBack}
+            type="button"
+          >
             <ArrowLeft size={18} /> Back
           </button>
         ) : (
@@ -31,13 +39,13 @@ export function WizardFrame({
       {progress.currentStep ? (
         <div className={styles.progressWrap}>
           <div className={styles.progressMeta}>
-            <span>
+            <span className={styles.stepBadge}>
               Step {progress.currentStep} of {progress.totalSteps}
             </span>
-            <span>
+            <span className={styles.screenLabel}>
               {progress.substep
-                ? `${progress.substep.current} of ${progress.substep.total}`
-                : currentScreenId}
+                ? `${getScreenLabel(currentScreenId)} ${progress.substep.current} of ${progress.substep.total}`
+                : getScreenLabel(currentScreenId)}
             </span>
           </div>
           <progress

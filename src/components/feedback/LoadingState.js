@@ -1,12 +1,17 @@
-import { Skeleton, Stack } from '@mui/material';
+import { LoadingSpinner } from '@/components/feedback/LoadingSpinner/LoadingSpinner';
 
-export function LoadingState({ rows = 3 }) {
+export function LoadingState({
+  message = 'Loading…',
+  sublabel = 'Preparing Townexa Roadside Assistance…',
+  fullPage = true,
+  card = false,
+}) {
   return (
-    <Stack aria-label="Loading content" spacing={2}>
-      <Skeleton height={36} variant="rounded" width="45%" />
-      {Array.from({ length: rows }, (_, index) => (
-        <Skeleton height={72} key={index} variant="rounded" />
-      ))}
-    </Stack>
+    <LoadingSpinner
+      fullPage={fullPage}
+      card={card}
+      label={message}
+      sublabel={sublabel}
+    />
   );
 }

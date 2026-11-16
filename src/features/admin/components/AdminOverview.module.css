@@ -1,5 +1,9 @@
 .header {
-  @apply mb-8;
+  @apply mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between;
+}
+
+.eyebrow {
+  @apply mb-2 mt-0 text-xs font-extrabold uppercase tracking-[0.16em] text-brand-700;
 }
 
 .title {
@@ -10,14 +14,117 @@
   @apply mb-0 mt-3 max-w-2xl leading-7 text-slate-600;
 }
 
-.cardsGrid {
-  @apply grid gap-4 md:grid-cols-3;
+.role {
+  @apply inline-flex w-fit rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold capitalize text-slate-700;
 }
 
-.value {
-  @apply m-0 text-2xl font-extrabold text-slate-950;
+.metricsGrid {
+  @apply mb-6 grid gap-4 md:grid-cols-3;
 }
 
-.label {
-  @apply mb-0 mt-2 text-sm text-slate-500;
+.metricLabel,
+.metricHint {
+  @apply m-0 text-sm text-slate-500;
+}
+
+.metricValue {
+  @apply mb-1 mt-2 text-3xl font-extrabold text-slate-950;
+}
+
+.metricHint {
+  @apply text-xs;
+}
+
+.dashboardGrid {
+  @apply grid gap-6;
+}
+
+.sectionHeader {
+  @apply mb-4 flex items-start justify-between gap-4;
+}
+
+.sectionTitle {
+  @apply m-0 text-xl font-extrabold text-slate-950;
+}
+
+.sectionDescription {
+  @apply mb-0 mt-1 text-sm leading-6 text-slate-500;
+}
+
+.tableWrap {
+  @apply -mx-2 overflow-x-auto sm:mx-0;
+}
+
+.table {
+  @apply w-full min-w-[900px] border-collapse text-left text-sm;
+}
+
+.table th {
+  @apply border-b border-solid border-slate-200 px-3 py-3 text-xs font-extrabold uppercase tracking-wide text-slate-500;
+}
+
+.table td {
+  @apply border-b border-solid border-slate-100 px-3 py-4 align-top text-slate-700;
+}
+
+.table tbody tr:last-child td {
+  @apply border-b-0;
+}
+
+.strong {
+  @apply m-0 font-bold text-slate-900;
+}
+
+.subtle {
+  @apply mt-1 block text-xs leading-5 text-slate-500;
+}
+
+.status {
+  @apply inline-flex rounded-full bg-slate-100 px-2.5 py-1 text-xs font-bold capitalize text-slate-700;
+}
+
+.status_succeeded,
+.status_delivered,
+.status_acknowledged,
+.status_completed {
+  @apply bg-emerald-100 text-emerald-800;
+}
+
+.status_ready,
+.status_processing,
+.status_contacted,
+.status_assigned {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.status_failed,
+.status_dead_letter,
+.status_cancelled {
+  @apply bg-red-100 text-red-800;
+}
+
+.status_pending,
+.status_new,
+.status_not_ready {
+  @apply bg-amber-100 text-amber-800;
+}
+
+.empty {
+  @apply mb-0 rounded-xl bg-slate-50 p-5 text-sm text-slate-600;
+}
+
+.queueList {
+  @apply m-0 grid list-none divide-y divide-slate-100 p-0;
+}
+
+.queueItem {
+  @apply flex items-start justify-between gap-4 py-4 first:pt-0 last:pb-0;
+}
+
+.shortcuts {
+  @apply mt-6 flex flex-wrap gap-4 text-sm font-bold;
+}
+
+.shortcuts a {
+  @apply cursor-pointer text-brand-700 underline underline-offset-4 hover:text-slate-900;
 }

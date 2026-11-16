@@ -1,0 +1,20 @@
+.container {
+  @apply mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8;
+}
+
+.liveAlert {
+  @apply mb-4 flex items-center justify-between rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-xs font-bold text-emerald-900 shadow-sm transition-all;
+}
+
+.liveAlertContent {
+  @apply flex items-center gap-2;
+}
+
+.liveAlertClose {
+  @apply text-emerald-700 hover:text-emerald-950 cursor-pointer p-1 rounded-md transition;
+}
+
+.tabContent {
+  @apply mt-6;
+}
+

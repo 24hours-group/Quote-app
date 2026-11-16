@@ -1,10 +1,11 @@
 begin;
 
 create extension if not exists pgtap with schema extensions;
-select plan(29);
+select plan(31);
 
 select has_table('public', 'customers', 'customers table exists');
 select has_table('public', 'booking_sessions', 'booking_sessions table exists');
+select has_table('public', 'booking_phone_verifications', 'booking_phone_verifications table exists');
 select has_table('public', 'vehicles', 'vehicles table exists');
 select has_table('public', 'locations', 'locations table exists');
 select has_table('public', 'service_requests', 'service_requests table exists');
@@ -53,6 +54,10 @@ select ok(
   (select relrowsecurity from pg_catalog.pg_class where oid = 'public.bookings'::regclass),
   'bookings has RLS enabled'
 );
+select ok(
+  (select relrowsecurity from pg_catalog.pg_class where oid = 'public.booking_phone_verifications'::regclass),
+  'booking_phone_verifications has RLS enabled'
+);
 select is(
   (
     select count(*)
@@ -61,6 +66,7 @@ select is(
       'public.admin_profiles'::regclass,
       'public.customers'::regclass,
       'public.booking_sessions'::regclass,
+      'public.booking_phone_verifications'::regclass,
       'public.vehicles'::regclass,
       'public.locations'::regclass,
       'public.service_requests'::regclass,
@@ -78,7 +84,7 @@ select is(
       'public.application_settings'::regclass
     ]) and relrowsecurity
   ),
-  18::bigint,
+  19::bigint,
   'every application table has RLS enabled'
 );
 

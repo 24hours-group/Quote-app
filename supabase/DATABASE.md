@@ -13,6 +13,7 @@ erDiagram
   auth_users ||--o| admin_profiles : authorizes
   auth_users ||--o| customers : optionally_owns
   customers ||--o{ booking_sessions : starts
+  booking_sessions ||--o| booking_phone_verifications : verifies
   booking_sessions ||--o{ vehicles : contains
   booking_sessions ||--o{ locations : contains
   booking_sessions ||--|| service_requests : captures
@@ -30,26 +31,27 @@ erDiagram
 
 ## Tables
 
-| Table                     | Purpose and important invariants                                                                                                                              |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `customers`               | Verified E.164 phone, name, optional Auth owner, and explicit SMS consent timestamp. A customer row is created only after phone verification.                 |
-| `booking_sessions`        | Current screen/progress, request type, expiry, optional Auth owner, and a unique SHA-256 access-token hash. Raw guest tokens are never stored.                |
-| `vehicles`                | Session/customer vehicle with constrained year and heavy-duty classification.                                                                                 |
-| `locations`               | One pickup and one drop-off per session, Google Place ID, coordinates, confirmation state, and validated IANA timezone.                                       |
-| `service_requests`        | One request per session with same-session vehicle/location composite foreign keys, structured answers, notes, and special flags.                              |
-| `route_calculations`      | Immutable Google route result. Pickup/drop-off must exactly match the service request. Meters, raw miles, billable miles, and provider metadata are retained. |
-| `pricing_parameters`      | Versioned/effective numeric parameters. Only one version per key can be active. Monetary values must be whole cents.                                          |
-| `quotes`                  | Immutable route/pricing/monetary snapshot, integer subtotal/tax/total, ISO currency, validity, and controlled status lifecycle.                               |
-| `quote_line_items`        | Immutable normalized line-item snapshot. Deferred constraints require line totals to equal the quote subtotal.                                                |
-| `payments`                | Provider references and integer amounts only. Amount/currency must match an accepted, unexpired quote. Request identity and idempotency key are immutable.    |
-| `payment_provider_events` | Append-only webhook/event ledger with globally unique provider event IDs and payload hashes.                                                                  |
-| `payment_refunds`         | Idempotent provider refunds. Successful refund totals are locked/reconciled and cannot exceed the payment amount.                                             |
-| `bookings`                | Unique public reference tying one customer/session/request/quote/payment relationship together. Cross-record consistency is trigger-enforced.                 |
-| `handoff_leads`           | Server-collected escalation details, reason, assigned team, callback queue state, and resolution timestamp.                                                   |
-| `dispatch_notifications`  | Retryable outbox. Idempotency key and semantic event identity are both unique; request identity is immutable.                                                 |
-| `audit_logs`              | Append-only changes to administrators, pricing, settings, payments, bookings, handoffs, and dispatch records.                                                 |
-| `admin_profiles`          | Supabase Auth user mapped to one authorized application role. Disabled profiles immediately lose policy access.                                               |
-| `application_settings`    | Company/support/dispatch defaults and configurable customer messages by scope.                                                                                |
+| Table                         | Purpose and important invariants                                                                                                                                                                                         |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `customers`                   | US E.164 contact, name, optional Auth owner, and nullable ownership-verification timestamp. Formatting-only booking contacts remain unverified and isolated per session; legacy SMS consent columns are constrained off. |
+| `booking_sessions`            | Versioned partial wizard snapshot, exact screen/progress, flow request type, expiry, optional Auth owner, and a unique SHA-256 token hash. Raw guest tokens are never stored.                                            |
+| `booking_phone_verifications` | Historical challenge records retained only for migration compatibility. Its RPCs are revoked from the service role after migration `014`; the active S2 flow does not use OTP or Twilio.                                 |
+| `vehicles`                    | Session/customer vehicle with constrained year and heavy-duty classification.                                                                                                                                            |
+| `locations`                   | Immutable pickup/drop-off revisions with Google Place ID, coordinates, confirmation state, and validated IANA timezone.                                                                                                  |
+| `service_requests`            | Immutable quote revisions with same-session vehicle/location composite foreign keys, structured answers, notes, and special flags.                                                                                       |
+| `route_calculations`          | Immutable Google route result. Pickup/drop-off must exactly match the service request. Meters, raw miles, billable miles, and provider metadata are retained.                                                            |
+| `pricing_parameters`          | Versioned/effective numeric parameters. Only one version per key can be active. Monetary values must be whole cents.                                                                                                     |
+| `quotes`                      | Immutable route/pricing/monetary snapshot, request fingerprint, exact local-pricing context, integer subtotal/tax/total, validity, and controlled lifecycle.                                                             |
+| `quote_line_items`            | Immutable normalized line-item snapshot. Payable-now items reconcile to the quote subtotal; unknown confirmed-later charges remain zero until separately agreed.                                                         |
+| `payments`                    | Provider references and integer amounts only. Amount/currency must match an accepted, unexpired quote. Request identity and idempotency key are immutable.                                                               |
+| `payment_provider_events`     | Append-only webhook/event ledger with globally unique provider event IDs and payload hashes.                                                                                                                             |
+| `payment_refunds`             | Idempotent provider refunds. Successful refund totals are locked/reconciled and cannot exceed the payment amount.                                                                                                        |
+| `bookings`                    | Unique public reference tying one customer/session/request/quote/payment relationship together. Cross-record consistency is trigger-enforced.                                                                            |
+| `handoff_leads`               | Server-collected escalation details, reason, assigned team, callback queue state, and resolution timestamp.                                                                                                              |
+| `dispatch_notifications`      | Retryable outbox. Idempotency key and semantic event identity are both unique; request identity is immutable.                                                                                                            |
+| `audit_logs`                  | Append-only changes to administrators, pricing, settings, payments, bookings, handoffs, and dispatch records.                                                                                                            |
+| `admin_profiles`              | Supabase Auth user mapped to one authorized application role. Disabled profiles immediately lose policy access.                                                                                                          |
+| `application_settings`        | Company/support/dispatch defaults and configurable customer messages by scope.                                                                                                                                           |
 
 No table contains card number, PAN, CVV/CVC, expiration date, or bank credentials. Stripe-hosted payment collection must remain the card-data boundary.
 
@@ -64,7 +66,7 @@ A quote is assembled in `draft` state in one transaction:
 
 After insertion, route calculations, quote monetary fields, pricing snapshot, validity, and line items cannot be changed. The snapshot must include every pricing parameter, value, unit, and version used by the server calculator. A new calculation creates a new quote; it never edits a historical quote.
 
-Only `offered` quotes can become `accepted`, and acceptance must occur before `valid_until`. Payments require an accepted, unexpired quote and exact amount/currency equality.
+Only active (`offered`) quotes can become `accepted`, `declined`, `superseded`, or time-expired, and acceptance must occur before `valid_until`. Customer-session transitions use the service-role-only `transition_authoritative_quote` RPC and write audit records. Payments require an accepted, unexpired quote and exact amount/currency equality.
 
 ## Idempotency
 
@@ -100,7 +102,7 @@ Ordinary authenticated customers also receive no direct customer, session, quote
 | `anon`                   | No application table access.                                                                   |
 | `service_role`           | Trusted backend workflows only; bypasses RLS and must never reach browser code.                |
 
-Payment/refund writes and the three idempotent RPCs are service-role-only. Frontend route protection is not a substitute for these policies.
+Payment/refund writes, booking-draft RPCs, and phone-verification RPCs are service-role-only. `load_booking_draft`, `save_booking_draft`, and `revoke_booking_draft` enforce active-session checks in PostgreSQL; saves and revocation use compare-and-swap versions so stale concurrent requests cannot overwrite newer progress. Frontend route protection is not a substitute for these policies.
 
 ## Supabase clients
 
@@ -135,7 +137,7 @@ npm run db:lint
 npm run db:test
 ```
 
-`db:reset` applies every migration and `supabase/seed.sql`. Seed pricing and contact details are examples for local development only and must not be promoted as production pricing.
+`db:reset` applies every migration and `supabase/seed.sql`. Pricing version 2 is installed by the authoritative-pricing migration; seeded company/contact settings are local examples and must be replaced for production.
 
 The pgTAP suites cover:
 
@@ -144,7 +146,7 @@ The pgTAP suites cover:
 - RLS on every application table;
 - no anonymous policies or customer enumeration;
 - administrator access;
-- quote/payment/refund invariants;
+- authoritative pricing version, quote RPC privileges, and quote/payment/refund invariants;
 - matching and conflicting payment/provider/dispatch retries;
 - audit creation.
 
@@ -158,3 +160,5 @@ The pgTAP suites cover:
 6. Apply request rate limits and correlation IDs at the API layer.
 7. Define backup, point-in-time recovery, audit retention, expired-session cleanup, and privacy deletion policies.
 8. Run `supabase db reset`, `supabase db lint`, and `supabase test db` in CI with Docker before deployment.
+
+22a387f8-1a56-4191-ad39-4a83fdc10cef

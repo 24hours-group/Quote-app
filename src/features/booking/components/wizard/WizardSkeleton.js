@@ -1,13 +1,11 @@
-import styles from './BookingWizard.module.css';
+import { LoadingSpinner } from '@/components/feedback/LoadingSpinner/LoadingSpinner';
 
 export function WizardSkeleton() {
   return (
-    <div className={styles.skeleton} aria-label="Loading saved progress">
-      <div className={styles.skeletonLine} />
-      <div className={styles.skeletonHero} />
-      <div className={styles.skeletonLine} />
-      <div className={styles.skeletonLine} />
-      <div className={styles.skeletonLine} />
-    </div>
+    <LoadingSpinner
+      card
+      label="Loading your booking…"
+      sublabel="Restoring your session and vehicle roadside details"
+    />
   );
 }

@@ -1,17 +1,7 @@
-import { getMockQuoteForService } from '@/features/booking/mock-data/mockQuotes';
-
-const wait = (milliseconds) =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds));
-
-export async function fetchMockQuote(answers) {
-  await wait(650);
-  if (answers.mockQuoteFailure) {
-    throw new Error('The quote preview could not be loaded.');
+export function assertDemoBookingAvailable(environment = process.env.NODE_ENV) {
+  if (environment === 'production') {
+    throw new Error(
+      'Demo booking services are disabled in production. Configure server-backed booking integrations.',
+    );
   }
-  return getMockQuoteForService(answers.serviceType);
-}
-
-export async function submitMockPayment() {
-  await wait(800);
-  return { status: 'succeeded', reference: 'RS-DEMO-2401' };
 }

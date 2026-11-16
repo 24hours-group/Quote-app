@@ -33,11 +33,16 @@ export const HANDOFF_CODES = Object.freeze({
 export const SERVICE_SCREEN_IDS = Object.freeze({
   jump_start: 'J1',
   flat_tire: 'T1',
+  tire_change: 'T1',
+  tire_replace: 'T1',
   locked_out: 'L1',
+  lockout: 'L1',
   tow: 'W1',
   out_of_gas: 'G1',
+  fuel_delivery: 'G1',
   mechanic_check: 'M1',
   stuck: 'X1',
+  winch_out: 'X1',
 });
 
 export const QUOTE_EDIT_SCREEN_IDS = Object.freeze([
@@ -73,7 +78,7 @@ export const screenConfigs = Object.freeze({
   },
   S1: {
     id: 'S1',
-    title: 'Entry',
+    title: 'Request type',
     step: 2,
     required: [required('requestType', 'Choose how we can help.')],
     transitions: [
@@ -85,16 +90,16 @@ export const screenConfigs = Object.freeze({
   },
   S2: {
     id: 'S2',
-    title: 'Contact and phone check',
+    title: 'Contact details',
     step: 3,
     required: [
       required('fullName', 'Enter your first and last name.'),
-      required('mobileNumber', 'Enter a valid US mobile number.'),
+      required('receiptEmail', 'Enter a valid email for your payment receipt.'),
+      required('mobileNumber', 'Enter a valid US phone number.'),
       required(
-        'textConsent',
-        'Consent is required to send invoice and job texts.',
+        'contactAttached',
+        'Save your contact details before continuing.',
       ),
-      required('codeStatus', 'Enter and verify the 6-digit code.'),
     ],
     validations: [
       {
@@ -103,44 +108,36 @@ export const screenConfigs = Object.freeze({
         message: 'Enter your first and last name.',
       },
       {
-        field: 'mobileNumber',
-        rule: 'usMobile',
-        message: 'Enter a valid US mobile number.',
+        field: 'receiptEmail',
+        rule: 'email',
+        message: 'Enter a valid email for your payment receipt.',
       },
       {
-        field: 'textConsent',
-        rule: 'true',
-        message: 'Consent is required to send invoice and job texts.',
+        field: 'mobileNumber',
+        rule: 'usMobile',
+        message: 'Enter a valid US phone number.',
       },
     ],
     transitions: [
       transition(
         {
           all: [
-            { field: 'codeStatus', eq: 'failed' },
-            { field: 'codeAttempts', gte: 3 },
-          ],
-        },
-        'R',
-        { reasonCode: HANDOFF_CODES.MISSING_INFO },
-      ),
-      transition(
-        {
-          all: [
-            { field: 'codeStatus', eq: 'verified' },
+            { field: 'contactAttached', eq: true },
             { field: 'requestType', eq: 'new' },
           ],
         },
         'S4',
+        { allowEditReturn: true },
       ),
       transition(
         {
           all: [
-            { field: 'codeStatus', eq: 'verified' },
+            { field: 'contactAttached', eq: true },
             { field: 'requestType', in: ['existing', 'cancel'] },
           ],
         },
         'S5',
+        { allowEditReturn: true },
       ),
     ],
   },
@@ -150,6 +147,14 @@ export const screenConfigs = Object.freeze({
     step: 4,
     required: [
       required('locationStatus', 'Find an address and confirm its map pin.'),
+      required(
+        'locationResolutionId',
+        'Choose a verified address or current location.',
+        {
+          field: 'locationStatus',
+          in: ['pin_moved', 'confirmed'],
+        },
+      ),
     ],
     transitions: [
       transition({ field: 'locationStatus', eq: 'unavailable' }, 'R', {
@@ -158,12 +163,14 @@ export const screenConfigs = Object.freeze({
       transition({ field: 'locationStatus', eq: 'not_found' }, 'S4', {
         type: 'validation',
         code: 'ADDRESS_NOT_FOUND',
+        field: 'locationStatus',
         message:
           "We couldn't find that address. Add the city or a cross street.",
       }),
       transition({ field: 'locationStatus', eq: 'pin_moved' }, 'S4', {
         type: 'validation',
         code: 'PIN_CONFIRMATION_REQUIRED',
+        field: 'locationStatus',
         message: 'Confirm the updated address and map pin.',
       }),
       transition({ field: 'locationStatus', eq: 'confirmed' }, 'S5', {
@@ -176,10 +183,34 @@ export const screenConfigs = Object.freeze({
     title: 'Vehicle',
     step: 5,
     required: [
-      required('year', 'Enter the vehicle year.'),
-      required('make', 'Enter the vehicle make.'),
-      required('model', 'Enter the vehicle model.'),
-      required('vehicleSize', 'Answer the vehicle size question.'),
+      required('year', 'Enter the vehicle year.', {
+        field: 'requestType',
+        eq: 'new',
+      }),
+      required('make', 'Enter the vehicle make.', {
+        field: 'requestType',
+        eq: 'new',
+      }),
+      required('model', 'Enter the vehicle model.', {
+        field: 'requestType',
+        eq: 'new',
+      }),
+      required('vehicleSize', 'Answer the vehicle size question.', {
+        field: 'requestType',
+        eq: 'new',
+      }),
+      required('bookingReference', 'Enter your booking reference.', {
+        field: 'requestType',
+        in: ['existing', 'cancel'],
+      }),
+    ],
+    validations: [
+      {
+        field: 'bookingReference',
+        rule: 'bookingReference',
+        message: 'Enter a valid reference, such as RS-1A2B3C4D5E.',
+        when: { field: 'requestType', in: ['existing', 'cancel'] },
+      },
     ],
     transitions: [
       transition({ field: 'vehicleSize', eq: 'unknown' }, 'R', {
@@ -191,22 +222,28 @@ export const screenConfigs = Object.freeze({
       transition(
         {
           all: [
-            { field: 'vehicleSize', eq: 'regular' },
+            { field: 'bookingReference', present: true },
             { field: 'requestType', eq: 'existing' },
           ],
         },
         'R',
-        { reasonCode: HANDOFF_CODES.EXISTING_JOB },
+        {
+          bypassValidation: false,
+          reasonCode: HANDOFF_CODES.EXISTING_JOB,
+        },
       ),
       transition(
         {
           all: [
-            { field: 'vehicleSize', eq: 'regular' },
+            { field: 'bookingReference', present: true },
             { field: 'requestType', eq: 'cancel' },
           ],
         },
         'R',
-        { reasonCode: HANDOFF_CODES.CANCEL_JOB },
+        {
+          bypassValidation: false,
+          reasonCode: HANDOFF_CODES.CANCEL_JOB,
+        },
       ),
       transition(
         {
@@ -228,6 +265,15 @@ export const screenConfigs = Object.freeze({
     transitions: [
       ...Object.entries(SERVICE_SCREEN_IDS).map(([serviceType, screenId]) =>
         transition({ field: 'serviceType', eq: serviceType }, screenId),
+      ),
+      transition(
+        {
+          all: [
+            { field: 'serviceType', eq: 'other' },
+            { field: 'mechanicIssue', present: true },
+          ],
+        },
+        'M1',
       ),
       transition({ field: 'serviceType', eq: 'other' }, 'R', {
         reasonCode: HANDOFF_CODES.UNLISTED_SERVICE,
@@ -326,40 +372,51 @@ export const screenConfigs = Object.freeze({
     step: 7,
     substep: { current: 1, total: 2 },
     required: [
-      required('dropoffAddress', 'Enter where you want the vehicle towed.'),
+      required('dropoffResolutionId', 'Choose a verified drop-off address.'),
+      required('dropoffStatus', 'Confirm the drop-off location.'),
     ],
     transitions: [
       transition({ field: 'pickupChanged', eq: true }, 'S4', {
         returnTo: 'W1',
         bypassValidation: true,
       }),
-      transition({ field: 'dropoffAddress', present: true }, 'W2'),
+      transition(
+        {
+          all: [
+            { field: 'dropoffResolutionId', present: true },
+            { field: 'dropoffStatus', eq: 'confirmed' },
+          ],
+        },
+        'W2',
+      ),
     ],
   },
   W2: {
     id: 'W2',
-    title: 'Tow miles and neutral',
+    title: 'Tow route and neutral',
     step: 7,
     substep: { current: 2, total: 2 },
     required: [
-      required('towMiles', 'Enter the distance in miles.'),
-      required('neutral', 'Tell us whether the vehicle can be put in neutral.'),
-    ],
-    validations: [
-      {
-        field: 'towMiles',
-        rule: 'positiveNumber',
-        message: 'Enter the distance in miles.',
-      },
+      required('routeCalculationId', 'Wait for the driving route to load.'),
+      required('routeStatus', 'Wait for the driving route to load.'),
+      required(
+        'neutral',
+        'Tell us whether the vehicle can be put in neutral.',
+        { field: 'routeBillableMiles', betweenExclusiveMin: [0, 100] },
+      ),
     ],
     transitions: [
-      transition({ field: 'towMiles', gt: 100 }, 'R', {
+      transition({ field: 'routeBillableMiles', gt: 100 }, 'R', {
         reasonCode: HANDOFF_CODES.OVER_LIMIT,
       }),
       transition(
         {
           all: [
-            { field: 'towMiles', betweenExclusiveMin: [0, 100] },
+            { field: 'routeStatus', eq: 'ready' },
+            {
+              field: 'routeBillableMiles',
+              betweenExclusiveMin: [0, 100],
+            },
             { field: 'neutral', in: ['yes', 'no', 'not_sure'] },
           ],
         },
@@ -477,6 +534,10 @@ export const screenConfigs = Object.freeze({
       required('paymentStatus', 'Complete payment or choose pay by phone.'),
     ],
     transitions: [
+      transition({ field: 'paymentStatus', eq: 'simulated' }, null, {
+        type: 'complete',
+        outcome: 'simulated_paid',
+      }),
       transition({ field: 'paymentStatus', eq: 'succeeded' }, null, {
         type: 'complete',
         outcome: 'paid',
@@ -492,7 +553,7 @@ export const screenConfigs = Object.freeze({
   },
   R: {
     id: 'R',
-    title: 'Hand-off to a person',
+    title: 'Contact support',
     step: null,
     required: [],
     transitions: [

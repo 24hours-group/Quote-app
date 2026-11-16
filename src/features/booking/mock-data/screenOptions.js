@@ -21,14 +21,14 @@ export const entryOptions = [
   },
   {
     value: 'existing',
-    label: 'Check on a request',
-    description: 'Get an update from the team handling it',
+    label: 'Request a status update',
+    description: 'Ask the team handling your booking to contact you',
     icon: ClipboardCheck,
   },
   {
     value: 'cancel',
-    label: 'Cancel a request',
-    description: 'Talk through cancellation and refund options',
+    label: 'Request cancellation review',
+    description: 'Ask an agent to review cancellation and refund options',
     icon: RotateCcw,
   },
 ];

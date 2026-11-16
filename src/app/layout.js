@@ -3,10 +3,10 @@ import '@/styles/globals.css';
 
 export const metadata = {
   title: {
-    default: 'Roadside Quote',
-    template: '%s | Roadside Quote',
+    default: 'Townexa | Towing Made Simple.',
+    template: '%s | Townexa',
   },
-  description: 'Self-service roadside assistance quotes and bookings.',
+  description: 'Townexa - Towing Made Simple. Fast, reliable roadside assistance quotes and bookings.',
 };
 
 export default function RootLayout({ children }) {

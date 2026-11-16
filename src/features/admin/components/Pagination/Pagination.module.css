@@ -1,0 +1,60 @@
+.container {
+  @apply flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 pb-1 border-t border-slate-200/80;
+}
+
+.summaryWrap {
+  @apply flex flex-wrap items-center gap-3 text-xs text-slate-500 select-none;
+}
+
+.summaryText {
+  @apply text-xs text-slate-500;
+}
+
+.summaryHighlight {
+  @apply font-bold text-slate-800;
+}
+
+.pageSizeWrap {
+  @apply inline-flex items-center gap-1.5;
+}
+
+.pageSizeLabel {
+  @apply text-[11px] font-semibold text-slate-500 uppercase tracking-wider;
+}
+
+.pageSizeSelect {
+  @apply rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-navy-900 focus:outline-none focus:ring-1 focus:ring-navy-900 cursor-pointer;
+}
+
+.navGroup {
+  @apply inline-flex items-center gap-1 select-none;
+}
+
+.arrowButton {
+  @apply inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition duration-150 hover:bg-slate-50 hover:border-slate-300 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none;
+}
+
+.arrowLabel {
+  @apply text-xs font-semibold;
+}
+
+.pageButtons {
+  @apply inline-flex items-center gap-1;
+}
+
+.pageButton {
+  @apply inline-flex items-center justify-center min-w-[32px] h-8 rounded-lg text-xs font-bold transition duration-150 active:scale-95 cursor-pointer;
+}
+
+.pageButtonActive {
+  @apply bg-navy-900 border border-navy-900 text-white shadow-sm;
+}
+
+.pageButtonInactive {
+  @apply border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300;
+}
+
+.ellipsis {
+  @apply inline-flex items-center justify-center min-w-[24px] h-8 text-xs font-bold text-slate-400 select-none;
+}
+

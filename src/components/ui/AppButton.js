@@ -1,11 +1,12 @@
 'use client';
 
-import { Button, CircularProgress } from '@mui/material';
+import { Button } from '@mui/material';
+import { LoadingSpinner } from '@/components/feedback/LoadingSpinner/LoadingSpinner';
 
 export function AppButton({ children, loading = false, disabled, ...props }) {
   return (
     <Button disabled={disabled || loading} {...props}>
-      {loading ? <CircularProgress color="inherit" size={20} /> : children}
+      {loading ? <LoadingSpinner label={null} size="sm" /> : children}
     </Button>
   );
 }

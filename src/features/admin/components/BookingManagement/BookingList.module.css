@@ -1,0 +1,174 @@
+.container {
+  @apply grid gap-4;
+}
+
+.filterBar {
+  @apply flex flex-col md:flex-row gap-3 items-stretch md:items-center justify-between;
+}
+
+.searchBox {
+  @apply relative flex-1 max-w-md;
+}
+
+.searchInput {
+  @apply w-full rounded-2xl border border-slate-200 bg-white pl-9 pr-4 py-2.5 text-xs font-medium text-slate-800 placeholder-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 shadow-sm transition;
+}
+
+.searchIcon {
+  @apply absolute left-3 top-3 text-slate-400;
+}
+
+.filterPills {
+  @apply flex flex-wrap gap-1.5 items-center;
+}
+
+.filterPill {
+  @apply rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs font-bold text-slate-600 transition-all duration-150 hover:bg-slate-50 hover:text-navy-950 active:scale-95 active:bg-slate-100 whitespace-nowrap shadow-sm cursor-pointer select-none;
+}
+
+.filterPillActive {
+  @apply bg-navy-950 border-navy-950 text-white hover:bg-navy-900 active:scale-95 active:bg-black;
+}
+
+.tableWrap {
+  @apply overflow-x-auto rounded-3xl border border-slate-200/90 bg-white shadow-md;
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+.tableWrap::-webkit-scrollbar {
+  height: 6px;
+}
+
+.tableWrap::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tableWrap::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.tableWrap::-webkit-scrollbar-thumb:hover {
+  background-color: #94a3b8;
+}
+
+.table {
+  @apply w-full min-w-full text-left border-collapse text-xs whitespace-nowrap;
+}
+
+.table thead tr {
+  @apply border-b border-slate-200 bg-slate-50/90;
+}
+
+.table th {
+  @apply px-5 py-4 font-bold text-slate-500 uppercase tracking-wider text-[11px] whitespace-nowrap bg-slate-50/90;
+}
+
+.table tbody tr {
+  @apply border-b border-slate-100 transition-colors hover:bg-blue-50/30;
+}
+
+.table td {
+  @apply px-5 py-4 align-middle whitespace-nowrap text-slate-700;
+}
+
+.refCode {
+  @apply font-mono font-black text-navy-950 bg-slate-100/90 hover:bg-blue-600 hover:text-white active:scale-95 active:bg-blue-700 px-3 py-1.5 rounded-xl border border-slate-200 transition-all duration-150 whitespace-nowrap inline-flex items-center gap-1.5 text-xs shadow-sm cursor-pointer select-none;
+}
+
+.customerBlock {
+  @apply flex flex-col whitespace-nowrap;
+}
+
+.customerName {
+  @apply font-extrabold text-navy-950 text-xs leading-snug whitespace-nowrap;
+}
+
+.customerPhone {
+  @apply text-slate-500 text-[11px] inline-flex items-center gap-1 hover:text-blue-600 active:scale-95 transition-all duration-150 whitespace-nowrap mt-0.5 font-medium cursor-pointer;
+}
+
+.noPhone {
+  @apply text-slate-400 text-[11px] whitespace-nowrap mt-0.5;
+}
+
+.serviceBlock {
+  @apply flex flex-col whitespace-nowrap;
+}
+
+.serviceName {
+  @apply font-bold text-slate-900 capitalize whitespace-nowrap;
+}
+
+.serviceDetailSubtitle {
+  @apply text-blue-700 text-[11px] block mt-0.5 whitespace-nowrap font-semibold;
+}
+
+.vehicleSubtitle {
+  @apply text-slate-500 text-[11px] block mt-0.5 whitespace-nowrap font-medium;
+}
+
+.locationsCell {
+  @apply flex flex-col gap-1.5 whitespace-nowrap min-w-[260px];
+}
+
+.locItem {
+  @apply flex items-center gap-2 text-xs text-slate-700 whitespace-nowrap;
+}
+
+.locLabel {
+  @apply text-[10px] font-bold uppercase tracking-wider text-slate-400 shrink-0 w-8;
+}
+
+.locText {
+  @apply truncate max-w-[260px] font-semibold text-slate-800 whitespace-nowrap;
+}
+
+.pickupPin {
+  @apply text-blue-600 shrink-0;
+}
+
+.dropoffPin {
+  @apply text-emerald-600 shrink-0;
+}
+
+.milePill {
+  @apply shrink-0 rounded-md bg-blue-50 px-1.5 py-0.5 text-[10px] font-extrabold text-blue-700 border border-blue-200/80 whitespace-nowrap ml-1;
+}
+
+.paymentBlock {
+  @apply flex flex-col whitespace-nowrap;
+}
+
+.amountPrimary {
+  @apply font-black text-navy-950 text-xs block whitespace-nowrap;
+}
+
+.paymentSuccess {
+  @apply inline-flex items-center gap-1 text-[10px] uppercase font-extrabold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-md mt-1 w-fit whitespace-nowrap;
+}
+
+.paymentPending {
+  @apply inline-flex items-center gap-1 text-[10px] uppercase font-extrabold text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md mt-1 w-fit whitespace-nowrap;
+}
+
+.dispatchGroup {
+  @apply flex items-center gap-2.5 whitespace-nowrap;
+}
+
+.quickSelect {
+  @apply rounded-xl border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 hover:border-slate-300 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 active:scale-95 shadow-sm whitespace-nowrap transition-all duration-150 cursor-pointer;
+}
+
+.dateCell {
+  @apply text-slate-600 font-medium whitespace-nowrap text-xs;
+}
+
+.manageBtn {
+  @apply inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-700 shadow-sm transition-all duration-150 hover:bg-blue-600 hover:border-blue-600 hover:text-white active:scale-95 active:bg-blue-700 whitespace-nowrap cursor-pointer select-none;
+}
+
+.emptyState {
+  @apply rounded-3xl border border-dashed border-slate-200 bg-slate-50/50 p-12 text-center text-sm font-medium text-slate-500;
+}

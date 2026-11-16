@@ -1,7 +1,8 @@
 const publicCompany = {
-  name: process.env.NEXT_PUBLIC_COMPANY_NAME || 'Roadside Assistance Co.',
+  name: process.env.NEXT_PUBLIC_COMPANY_NAME || 'Townexa',
   phone: process.env.NEXT_PUBLIC_COMPANY_PHONE || '+1 555 010 2020',
-  email: process.env.NEXT_PUBLIC_COMPANY_EMAIL || 'support@example.com',
+  email: process.env.NEXT_PUBLIC_COMPANY_EMAIL || 'support@townexa.com',
+  tagline: 'Towing Made Simple.',
 };
 
 export const applicationConfig = Object.freeze({
@@ -18,6 +19,7 @@ export const applicationConfig = Object.freeze({
     enabled: true,
     emergencyServices: false,
     schedule: '24/7',
+    countryCodes: ['US'],
   },
 });
 

@@ -1,6 +1,7 @@
 import { AddressInput } from '@/features/booking/components/fields/AddressInput';
+import { ExistingRequestFields } from '@/features/booking/components/fields/ExistingRequestFields';
 import { OptionCardGroup } from '@/features/booking/components/fields/OptionCardGroup';
-import { TextInput } from '@/features/booking/components/fields/TextInput';
+import { VehicleCatalogFields } from '@/features/booking/components/fields/VehicleCatalogFields';
 import { serviceOptions } from '@/features/booking/mock-data/screenOptions';
 import { ScreenLayout } from '@/features/booking/components/wizard/ScreenLayout';
 import styles from './BookingScreens.module.css';
@@ -18,11 +19,28 @@ const vehicleSizeOptions = [
   },
 ];
 
-function LocationScreen({ answers, errors, setAnswer }) {
-  const updateAddress = (address) => {
-    setAnswer('locationAddress', address);
-    setAnswer('locationStatus', address ? 'pin_moved' : undefined);
+function LocationScreen({ answers, errors, setAnswer, setAnswers }) {
+  const updateLocation = (location) => {
+    setAnswers({
+      locationResolutionId: location.resolutionId,
+      locationAddress: location.formattedAddress,
+      locationPlaceId: location.placeId,
+      locationLatitude: location.latitude,
+      locationLongitude: location.longitude,
+      locationTimezone: location.timezone,
+      locationCountryCode: location.countryCode,
+      locationAccuracyMeters: location.accuracyMeters,
+      locationSource: location.source,
+      locationServiceAreaStatus: location.serviceAreaStatus,
+      locationResolvedAt: location.resolvedAt,
+      locationStatus:
+        location.serviceAreaStatus === 'available'
+          ? 'pin_moved'
+          : 'unavailable',
+    });
   };
+
+  const clearLocation = () => setAnswer('locationResolutionId', undefined);
 
   return (
     <ScreenLayout
@@ -34,9 +52,14 @@ function LocationScreen({ answers, errors, setAnswer }) {
         address={answers.locationAddress}
         error={errors.locationStatus}
         landmarks={answers.landmarks}
-        onAddressChange={updateAddress}
+        latitude={answers.locationLatitude}
+        locationStatus={answers.locationStatus}
+        longitude={answers.locationLongitude}
         onConfirm={() => setAnswer('locationStatus', 'confirmed')}
         onLandmarksChange={(value) => setAnswer('landmarks', value)}
+        onLocationChange={updateLocation}
+        onLocationClear={clearLocation}
+        serviceAreaStatus={answers.locationServiceAreaStatus}
       />
       {answers.locationStatus === 'confirmed' ? (
         <div className={styles.successInfo}>Location confirmed</div>
@@ -52,41 +75,43 @@ function LocationScreen({ answers, errors, setAnswer }) {
   );
 }
 
-function VehicleScreen({ answers, errors, setAnswer }) {
+function VehicleScreen({ answers, errors, setAnswer, setAnswers }) {
+  const isExistingRequest = ['existing', 'cancel'].includes(
+    answers.requestType,
+  );
+
+  if (isExistingRequest) {
+    return (
+      <ScreenLayout
+        description="Enter the reference from your confirmation. For privacy, an agent will verify the booking before sharing status details, cancelling service, or discussing a refund."
+        screenId="S5"
+        title={
+          answers.requestType === 'cancel'
+            ? 'Which booking needs review?'
+            : 'Which booking are you checking?'
+        }
+      >
+        <ExistingRequestFields
+          answers={answers}
+          errors={errors}
+          setAnswer={setAnswer}
+        />
+      </ScreenLayout>
+    );
+  }
+
   return (
     <ScreenLayout
-      description="This helps us send the right roadside vehicle. Heavy-duty vehicles are handled by a specialist team."
+      description="Select a suggestion or type your vehicle details if they are not listed. Heavy-duty vehicles are handled by a specialist team."
       screenId="S5"
       title="What are you driving?"
     >
-      <div className={styles.threeColumn}>
-        <TextInput
-          error={errors.year}
-          id="vehicle-year"
-          inputMode="numeric"
-          label="Year"
-          maxLength={4}
-          onChange={(event) => setAnswer('year', event.target.value)}
-          placeholder="2019"
-          value={answers.year || ''}
-        />
-        <TextInput
-          error={errors.make}
-          id="vehicle-make"
-          label="Make"
-          onChange={(event) => setAnswer('make', event.target.value)}
-          placeholder="Honda"
-          value={answers.make || ''}
-        />
-        <TextInput
-          error={errors.model}
-          id="vehicle-model"
-          label="Model"
-          onChange={(event) => setAnswer('model', event.target.value)}
-          placeholder="CR-V"
-          value={answers.model || ''}
-        />
-      </div>
+      <VehicleCatalogFields
+        answers={answers}
+        errors={errors}
+        setAnswer={setAnswer}
+        setAnswers={setAnswers}
+      />
       <OptionCardGroup
         error={errors.vehicleSize}
         label="Is it a box truck, RV, bus, or bigger than a 1-ton pickup?"

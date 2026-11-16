@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
-import { CheckCircle2, Info } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { OptionCardGroup } from '@/features/booking/components/fields/OptionCardGroup';
 import { TextInput } from '@/features/booking/components/fields/TextInput';
 import {
@@ -9,30 +9,13 @@ import {
   safetyOptions,
 } from '@/features/booking/mock-data/screenOptions';
 import { ScreenLayout } from '@/features/booking/components/wizard/ScreenLayout';
+
 import styles from './BookingScreens.module.css';
-import controlStyles from '../fields/BookingControls.module.css';
 
 function ContactScreen({ answers, errors, setAnswer }) {
-  const phoneDigits = (answers.mobileNumber || '')
-    .replace(/\D/g, '')
-    .replace(/^1/, '');
-  const canVerify = phoneDigits.length === 10;
-  const attempts = answers.codeAttempts || 0;
-  const isVerified = answers.codeStatus === 'verified';
-
-  const verifyCode = () => {
-    if (answers.verificationCode === '123456') {
-      setAnswer('codeStatus', 'verified');
-      return;
-    }
-    const nextAttempts = attempts + 1;
-    setAnswer('codeAttempts', nextAttempts);
-    setAnswer('codeStatus', nextAttempts >= 3 ? 'failed' : 'pending');
-  };
-
   return (
     <ScreenLayout
-      description="We’ll use this number for dispatcher calls, updates, and your receipt."
+      description="We’ll use these details for dispatcher calls and your payment receipt."
       screenId="S2"
       title="How can we reach you?"
     >
@@ -47,76 +30,32 @@ function ContactScreen({ answers, errors, setAnswer }) {
           value={answers.fullName || ''}
         />
         <TextInput
-          autoComplete="tel"
-          error={errors.mobileNumber}
+          autoComplete="email"
+          error={errors.receiptEmail}
+          id="receipt-email"
+          inputMode="email"
+          label="Receipt email"
+          onChange={(event) => setAnswer('receiptEmail', event.target.value)}
+          placeholder="you@example.com"
+          type="email"
+          value={answers.receiptEmail || ''}
+        />
+        <TextInput
+          autoComplete="tel-national"
+          error={errors.mobileNumber || errors.contactAttached}
           id="mobile-number"
           inputMode="tel"
-          label="Mobile number"
+          label="US phone number"
           onChange={(event) => setAnswer('mobileNumber', event.target.value)}
-          placeholder="(555) 555-0100"
+          placeholder="(212) 555-0100"
           value={answers.mobileNumber || ''}
         />
-        <label className={controlStyles.checkboxRow}>
-          <input
-            checked={Boolean(answers.textConsent)}
-            className={controlStyles.checkbox}
-            onChange={(event) => setAnswer('textConsent', event.target.checked)}
-            type="checkbox"
-          />
-          <span>
-            <strong>Text me the invoice and job updates</strong>
-            <span className={controlStyles.optionDescription}>
-              Consent is required for text delivery in this flow.
-            </span>
-          </span>
-        </label>
-        {errors.textConsent ? (
-          <span className={controlStyles.error}>{errors.textConsent}</span>
-        ) : null}
-        {canVerify ? (
-          <div className={styles.stack}>
-            <div className={styles.inlineInfo}>
-              <Info size={20} aria-hidden="true" />
-              SMS is mocked in this prototype. Use code <strong>123456</strong>.
-            </div>
-            {isVerified ? (
-              <div className={styles.successInfo}>
-                <CheckCircle2 size={18} /> Phone verified
-              </div>
-            ) : (
-              <div className={styles.verificationRow}>
-                <TextInput
-                  error={errors.codeStatus}
-                  id="verification-code"
-                  inputMode="numeric"
-                  label="6-digit code"
-                  maxLength={6}
-                  onChange={(event) =>
-                    setAnswer(
-                      'verificationCode',
-                      event.target.value.replace(/\D/g, ''),
-                    )
-                  }
-                  placeholder="------"
-                  value={answers.verificationCode || ''}
-                />
-                <button
-                  className={styles.smallButton}
-                  onClick={verifyCode}
-                  type="button"
-                >
-                  Verify code
-                </button>
-              </div>
-            )}
-            {attempts > 0 && !isVerified ? (
-              <p className={controlStyles.error} role="alert">
-                Code not recognized. {Math.max(0, 3 - attempts)} tries
-                remaining.
-              </p>
-            ) : null}
-          </div>
-        ) : null}
+
+        <div className={styles.inlineInfo}>
+          <Info size={20} aria-hidden="true" />
+          We validate US phone-number formatting only. This does not verify who
+          owns the number or whether it is active.
+        </div>
       </div>
     </ScreenLayout>
   );

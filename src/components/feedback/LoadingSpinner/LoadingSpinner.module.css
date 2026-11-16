@@ -1,0 +1,50 @@
+.container {
+  @apply flex flex-col items-center justify-center p-8 text-center;
+}
+
+.fullPage {
+  @apply min-h-[60vh] py-16;
+}
+
+.card {
+  @apply mx-auto w-full max-w-xl rounded-3xl border border-slate-200/90 bg-white p-10 shadow-card;
+}
+
+.spinnerWrap {
+  @apply relative flex items-center justify-center;
+}
+
+.spinnerSm {
+  @apply h-6 w-6;
+}
+
+.spinnerMd {
+  @apply h-12 w-12;
+}
+
+.spinnerLg {
+  @apply h-16 w-16;
+}
+
+.svgSpinner {
+  @apply animate-spin text-blue-600;
+}
+
+.track {
+  @apply opacity-20 text-slate-300;
+}
+
+.indicator {
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-linecap: round;
+}
+
+.label {
+  @apply mt-4 text-base font-extrabold tracking-tight text-navy-950;
+}
+
+.sublabel {
+  @apply mt-1 text-xs leading-relaxed text-slate-500 max-w-sm;
+}
+

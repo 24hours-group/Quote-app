@@ -1,9 +1,10 @@
-import { Card, CardContent } from '@mui/material';
+import styles from './SurfaceCard.module.css';
 
-export function SurfaceCard({ children, ...props }) {
+export function SurfaceCard({ children, className = '', ...props }) {
+  const cardClassName = className ? `${styles.card} ${className}` : styles.card;
   return (
-    <Card variant="outlined" {...props}>
-      <CardContent>{children}</CardContent>
-    </Card>
+    <div className={cardClassName} {...props}>
+      {children}
+    </div>
   );
 }

@@ -28,19 +28,6 @@ on conflict (setting_scope) do update set
   default_timezone = excluded.default_timezone,
   messages = excluded.messages;
 
-insert into public.pricing_parameters (
-  id,
-  parameter_key,
-  value,
-  unit,
-  version,
-  effective_from,
-  is_active
-) values
-  ('20000000-0000-4000-8000-000000000001', 'tow.base_fee', 9500, 'cents', 1, '2026-01-01T00:00:00Z', true),
-  ('20000000-0000-4000-8000-000000000002', 'tow.per_mile', 650, 'cents_per_mile', 1, '2026-01-01T00:00:00Z', true),
-  ('20000000-0000-4000-8000-000000000003', 'roadside.jump_start', 7500, 'cents', 1, '2026-01-01T00:00:00Z', true),
-  ('20000000-0000-4000-8000-000000000004', 'roadside.tire_change', 8500, 'cents', 1, '2026-01-01T00:00:00Z', true),
-  ('20000000-0000-4000-8000-000000000005', 'heavy_duty.surcharge', 5000, 'cents', 1, '2026-01-01T00:00:00Z', true),
-  ('20000000-0000-4000-8000-000000000006', 'quote.validity_minutes', 15, 'minutes', 1, '2026-01-01T00:00:00Z', true)
-on conflict (parameter_key, version) do nothing;
+-- Authoritative pricing version 2 is installed by
+-- 20261103000800_authoritative_pricing.sql so reset and production use the
+-- same immutable parameter set.

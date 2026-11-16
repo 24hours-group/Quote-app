@@ -21,10 +21,10 @@ const schemas = {
     STRIPE_SECRET_KEY: z.string().startsWith('sk_'),
     STRIPE_WEBHOOK_SECRET: z.string().startsWith('whsec_'),
   }),
-  twilio: z.object({
-    TWILIO_ACCOUNT_SID: z.string().startsWith('AC'),
-    TWILIO_AUTH_TOKEN: z.string().min(1),
-    TWILIO_VERIFY_SERVICE_SID: z.string().startsWith('VA'),
+
+  notificationWorker: z.object({
+    NOTIFICATION_WORKER_SECRET: z.string().min(32),
+    CRON_SECRET: z.string().min(32).optional(),
   }),
   resend: z.object({
     RESEND_API_KEY: z.string().startsWith('re_'),
@@ -47,5 +47,5 @@ export const getSupabaseAdminEnv = () => validate('supabaseAdmin');
 export const getGoogleMapsServerEnv = () => validate('googleMaps');
 export const getUpstashServerEnv = () => validate('upstash');
 export const getStripeServerEnv = () => validate('stripe');
-export const getTwilioServerEnv = () => validate('twilio');
+export const getNotificationWorkerEnv = () => validate('notificationWorker');
 export const getResendServerEnv = () => validate('resend');

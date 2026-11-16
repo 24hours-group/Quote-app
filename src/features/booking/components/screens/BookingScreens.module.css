@@ -11,15 +11,23 @@
 }
 
 .inlineInfo {
-  @apply flex items-start gap-3 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-600;
+  @apply flex items-start gap-3 rounded-2xl border border-solid border-blue-100/80 bg-blue-50/70 p-4 text-sm leading-relaxed text-navy-800 shadow-sm;
+}
+
+.inlineInfoIcon {
+  @apply text-blue-600 shrink-0 mt-0.5;
+}
+
+.inlineInfoText {
+  @apply text-slate-700 font-normal;
 }
 
 .successInfo {
-  @apply flex items-center gap-2 rounded-xl bg-emerald-50 p-3 text-sm font-bold text-emerald-800;
+  @apply flex items-center gap-2 rounded-xl border border-solid border-emerald-200 bg-emerald-50 p-3.5 text-sm font-bold text-emerald-800 shadow-sm;
 }
 
 .warningInfo {
-  @apply rounded-2xl border border-solid border-amber-200 bg-amber-50 p-4 text-sm leading-6 text-amber-950;
+  @apply rounded-2xl border border-solid border-amber-200 bg-amber-50/90 p-4 text-sm leading-relaxed text-amber-950 shadow-sm;
 }
 
 .verificationRow {
@@ -27,71 +35,164 @@
 }
 
 .smallButton {
-  @apply min-h-12 rounded-xl border border-solid border-slate-300 bg-white px-5 text-sm font-bold text-slate-700;
+  @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-solid border-slate-300 bg-white px-5 text-sm font-bold text-navy-900 shadow-sm transition-all duration-150 hover:bg-slate-50 hover:border-slate-400 active:scale-95 active:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100 select-none;
 }
 
 .linkButton {
-  @apply w-fit border-0 bg-transparent p-0 text-sm font-bold text-brand-700 underline underline-offset-4;
+  @apply w-fit cursor-pointer border-0 bg-transparent p-0 text-sm font-bold text-brand-600 underline underline-offset-4 hover:text-brand-700 active:scale-95 transition-all duration-150 select-none;
 }
 
 .sectionLabel {
-  @apply m-0 text-lg font-extrabold text-slate-950;
+  @apply m-0 text-lg font-extrabold text-navy-900;
 }
 
 .summaryList {
-  @apply m-0 grid divide-y divide-slate-100 rounded-2xl border border-solid border-slate-200 bg-white;
+  @apply m-0 grid divide-y divide-slate-100 rounded-2xl border border-solid border-slate-200/90 bg-white shadow-sm overflow-hidden;
 }
 
 .summaryRow {
-  @apply grid grid-cols-[7rem_1fr_auto] items-center gap-3 px-4 py-4 text-sm;
+  @apply grid grid-cols-[7rem_1fr_auto] items-center gap-3 px-5 py-4 text-sm transition-colors hover:bg-slate-50/60;
 }
 
 .summaryLabel {
-  @apply font-semibold text-slate-500;
+  @apply font-bold text-slate-500 uppercase tracking-wider text-xs;
 }
 
 .summaryValue {
-  @apply font-bold text-slate-900;
+  @apply font-bold text-navy-900 text-sm;
 }
 
 .editButton {
-  @apply min-h-9 rounded-lg border-0 bg-slate-100 px-3 text-xs font-bold text-slate-700;
+  @apply min-h-8 rounded-lg border border-solid border-slate-200 bg-white px-3 text-xs font-bold text-navy-900 shadow-sm transition-all duration-150 hover:bg-brand-50 hover:border-brand-300 hover:text-brand-600 active:scale-95 active:bg-brand-100 select-none cursor-pointer;
 }
 
 .quoteBox {
-  @apply overflow-hidden rounded-2xl border border-solid border-slate-200 bg-slate-50;
+  @apply overflow-hidden rounded-2xl border-2 border-solid border-brand-500/25 bg-slate-50/70 shadow-sm;
 }
 
 .quoteLine {
-  @apply flex items-center justify-between gap-4 px-5 py-3 text-sm text-slate-700;
+  @apply flex items-center justify-between gap-4 px-6 py-3.5 text-sm text-slate-700 font-medium;
 }
 
 .quoteTotal {
-  @apply flex items-center justify-between gap-4 border-0 border-t border-solid border-slate-200 bg-white px-5 py-5 text-xl font-extrabold text-slate-950;
+  @apply flex items-center justify-between gap-4 border-0 border-t-2 border-solid border-brand-500/20 bg-white px-6 py-5 text-xl font-extrabold text-navy-900;
 }
 
-.prototypeTag {
-  @apply inline-flex w-fit rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-amber-900;
+.quoteMeta {
+  @apply grid gap-1.5 rounded-2xl border border-solid border-brand-200 bg-brand-50/80 p-4 text-sm text-navy-800 shadow-sm;
 }
 
-.paymentPlaceholder {
-  @apply grid min-h-44 place-items-center rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-slate-500;
+.statusTag {
+  @apply mb-1 inline-flex w-fit items-center gap-1.5 rounded-full bg-emerald-100 border border-emerald-200 px-3 py-1 text-xs font-extrabold uppercase tracking-wide text-emerald-800;
+}
+
+.verifiedInfo {
+  @apply flex items-center gap-2.5 rounded-xl border border-solid border-emerald-200 bg-emerald-50/80 p-3.5 text-sm font-semibold text-emerald-800 shadow-sm;
+}
+
+.confirmedCharges {
+  @apply rounded-2xl border border-solid border-amber-200 bg-amber-50/90 p-5 text-sm text-amber-950 shadow-sm;
+}
+
+.confirmedCharges h3 {
+  @apply m-0 text-base font-extrabold text-amber-950;
+}
+
+.confirmedCharges p {
+  @apply mb-3 mt-2 leading-6;
+}
+
+.confirmedCharges ul {
+  @apply m-0 grid list-none gap-2 p-0;
+}
+
+.confirmedCharges li {
+  @apply flex items-center justify-between gap-4;
+}
+
+.acceptedQuote {
+  @apply flex items-center justify-between gap-4 rounded-2xl border border-solid border-emerald-200 bg-emerald-50/80 p-5 text-sm text-emerald-900 font-medium shadow-sm;
+}
+
+.acceptedQuote strong {
+  @apply text-lg;
+}
+
+.paymentStack {
+  @apply grid gap-4;
+}
+
+.paymentForm {
+  @apply grid gap-5 rounded-2xl border border-solid border-slate-200/90 bg-white p-5 sm:p-6 shadow-sm;
 }
 
 .handoffHeader {
-  @apply flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-700;
+  @apply flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 shadow-sm border border-blue-100;
 }
 
 .teamPill {
-  @apply inline-flex w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-slate-600;
+  @apply inline-flex w-fit rounded-full bg-navy-50 border border-navy-100 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-navy-800;
 }
 
 .phoneLink {
-  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-5 font-bold text-white;
+  @apply inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-500 px-6 font-bold text-white shadow-button transition-all hover:bg-brand-700;
 }
 
 .errorPanel {
-  @apply rounded-2xl border border-solid border-red-200 bg-red-50 p-4 text-sm text-red-900;
+  @apply rounded-2xl border border-solid border-red-200 bg-red-50/90 p-4 text-sm text-red-900 shadow-sm;
+}
+
+.errorText {
+  @apply text-sm leading-relaxed text-red-950 font-medium mb-0;
+}
+
+.errorActions {
+  @apply flex flex-wrap items-center gap-3 mt-3.5;
+}
+
+.actionPrimaryButton {
+  @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 text-sm font-bold text-white shadow-sm transition-all duration-150 hover:bg-blue-700 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 select-none;
+}
+
+.actionSecondaryButton {
+  @apply inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl border border-solid border-slate-300 bg-white px-5 text-sm font-bold text-navy-900 shadow-sm transition-all duration-150 hover:bg-slate-50 hover:border-slate-400 active:scale-95 active:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60 select-none;
+}
+
+.error {
+  @apply m-0 text-sm font-semibold text-red-600;
+}
+
+.locationCard {
+  @apply flex flex-col gap-3 rounded-2xl border border-solid border-slate-200/90 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between;
+}
+
+.locationAddress {
+  @apply mb-0 mt-1 text-sm leading-relaxed text-slate-600;
+}
+
+.routeSummary {
+  @apply flex items-center gap-4 rounded-2xl border border-solid border-blue-200/80 bg-blue-50/80 p-5 text-brand-700 shadow-sm;
+}
+
+.routeSummary strong,
+.routeSummary span {
+  @apply block;
+}
+
+.routeSummary strong {
+  @apply text-navy-900 text-base font-extrabold;
+}
+
+.routeSummary span {
+  @apply mt-1 text-sm text-slate-600;
+}
+
+.routeLoading {
+  @apply grid gap-3 rounded-2xl border border-solid border-slate-200/90 bg-slate-50 p-5 text-sm text-slate-600;
+}
+
+.inlineActions {
+  @apply mt-3 flex flex-wrap gap-3;
 }
 
 .loadingQuote {

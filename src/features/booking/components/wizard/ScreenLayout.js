@@ -1,9 +1,10 @@
+import { getScreenLabel } from '@/features/booking/utils/bookingFlow';
 import styles from './BookingWizard.module.css';
 
 export function ScreenLayout({ screenId, title, description, children }) {
   return (
     <section className={styles.card} aria-labelledby={`${screenId}-title`}>
-      <span className={styles.screenId}>{screenId}</span>
+      <span className={styles.screenId}>{getScreenLabel(screenId)}</span>
       <h1 className={styles.title} id={`${screenId}-title`}>
         {title}
       </h1>

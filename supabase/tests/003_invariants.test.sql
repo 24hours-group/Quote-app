@@ -3,6 +3,17 @@ begin;
 create extension if not exists pgtap with schema extensions;
 select plan(13);
 
+insert into public.application_settings (
+  setting_scope, company_name, support_phone_e164, dispatch_email, default_timezone
+) values (
+  'default',
+  'Invariant Test Roadside',
+  '+15550102020',
+  'dispatch@example.com',
+  'America/New_York'
+) on conflict (setting_scope) do update set
+  dispatch_email = excluded.dispatch_email;
+
 insert into public.customers (
   id, full_name, phone_e164, phone_verified_at
 ) values (
@@ -213,15 +224,6 @@ insert into public.bookings (
   'ready'
 );
 
-insert into public.dispatch_notifications (
-  booking_id, event_name, channel, recipient, idempotency_key
-) values (
-  '67000000-0000-4000-8000-000000000001',
-  'booking.paid',
-  'email',
-  'dispatch@example.com',
-  'dispatch-invariant-test-key'
-);
 
 select is(
   (public.enqueue_dispatch_notification(
@@ -229,9 +231,9 @@ select is(
     'booking.paid',
     'email',
     'dispatch@example.com',
-    'dispatch-invariant-test-key'
+    'dispatch:booking-paid:67000000-0000-4000-8000-000000000001'
   )).id,
-  (select id from public.dispatch_notifications where idempotency_key = 'dispatch-invariant-test-key'),
+  (select id from public.dispatch_notifications where idempotency_key = 'dispatch:booking-paid:67000000-0000-4000-8000-000000000001'),
   'matching dispatch retry returns the original notification'
 );
 
@@ -243,7 +245,7 @@ select throws_ok(
     'booking.paid',
     'email',
     'dispatch@example.com',
-    'dispatch-invariant-test-key'
+    'dispatch:booking-paid:67000000-0000-4000-8000-000000000001'
   )$$,
   '23505',
   null,

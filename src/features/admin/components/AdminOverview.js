@@ -1,31 +1,18 @@
-import { SurfaceCard } from '@/components/ui/SurfaceCard';
-import styles from './AdminOverview.module.css';
+import { getAuthorizedAdminProfile } from '@/features/admin/services/authorization';
+import { getAdminDashboardData } from '@/features/admin/services/adminDashboardService';
+import { AdminConsole } from './AdminConsole';
 
-const cards = [
-  ['Authentication', 'Supabase Auth foundation'],
-  ['Operations', 'No active bookings'],
-  ['Payments', 'Not enabled'],
-];
+export async function AdminOverview({ defaultTab = 'bookings' }) {
+  const profile = await getAuthorizedAdminProfile();
+  if (!profile) return null;
 
-export function AdminOverview() {
+  const dashboard = await getAdminDashboardData();
+
   return (
-    <section>
-      <header className={styles.header}>
-        <h1 className={styles.title}>Admin</h1>
-        <p className={styles.description}>
-          Administrative routing and authorization boundaries are ready for a
-          future implementation. Operational functionality is intentionally
-          disabled in this unit.
-        </p>
-      </header>
-      <div className={styles.cardsGrid}>
-        {cards.map(([value, label]) => (
-          <SurfaceCard key={value}>
-            <p className={styles.value}>{value}</p>
-            <p className={styles.label}>{label}</p>
-          </SurfaceCard>
-        ))}
-      </div>
-    </section>
+    <AdminConsole
+      initialDashboard={dashboard}
+      profile={profile}
+      defaultTab={defaultTab}
+    />
   );
 }
