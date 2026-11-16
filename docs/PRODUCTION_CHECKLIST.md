@@ -125,8 +125,8 @@ Automated evidence verifies server amount ownership, deterministic idempotency, 
 
 Automated evidence verifies immutable templates, provider idempotency, retries, leases, dead-letter transitions, failure alerts, and hand-off notifications.
 
-- [x] Vercel Cron configuration invokes the worker every minute with authenticated `GET`
-- [ ] Set `CRON_SECRET` and `NOTIFICATION_WORKER_SECRET` to independent random values of at least 32 characters
+- [x] Notification worker invokes via Supabase `pg_cron` (`* * * * *`) or Vercel Cron with authenticated `POST` / `GET`
+- [ ] Set `NOTIFICATION_WORKER_SECRET` (and optional `CRON_SECRET`) to random values of at least 32 characters
 - [ ] Verify the Resend sender domain and configured From address
 - [ ] Send staging dispatch, receipt, hand-off, retry, and dead-letter alert emails
 - [ ] Monitor queue age, retries, and dead-letter counts
@@ -159,7 +159,7 @@ Any new production match must be reviewed. Mock provider responses are allowed o
 - Build command: `npm run build`
 - Node.js runtime: 22.x
 - Output directory: leave unset
-- Cron: `vercel.json` schedules `/api/internal/notifications/process` every minute; verify the selected Vercel plan supports this frequency
+- Cron: Managed in Supabase via `pg_cron` (`* * * * *`) calling `/api/internal/notifications/process` (avoids Vercel Hobby plan 1-per-day cron limitation)
 
 ### Public environment variables
 
