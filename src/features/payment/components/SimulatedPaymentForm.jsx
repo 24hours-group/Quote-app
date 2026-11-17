@@ -27,9 +27,9 @@ export function SimulatedPaymentForm({ paymentId, onSimulationComplete }) {
 
   return (
     <div className={styles.paymentForm}>
-      <div className={styles.inlineInfo} role="note">
-        No card will be charged in this environment.
-      </div>
+      {/* <div className={styles.inlineInfo} role="note">
+        No card will be charged online. Payment can be settled directly with your driver upon arrival or confirmed with our dispatcher.
+      </div> */}
       {error ? (
         <div className={styles.errorPanel} role="alert">
           {error}

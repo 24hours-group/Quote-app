@@ -27,7 +27,8 @@ function response(data, status = 200) {
 
 function hasValidOrigin(request) {
   const origin = request.headers.get('origin');
-  return !origin || origin === request.nextUrl.origin;
+  const expectedOrigin = request.nextUrl?.origin || new URL(request.url).origin;
+  return !origin || origin === expectedOrigin;
 }
 
 export async function POST(request) {

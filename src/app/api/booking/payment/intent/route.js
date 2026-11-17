@@ -21,16 +21,19 @@ function response(data, status = 200) {
 }
 
 function errorResponse(error) {
+  console.error('API /api/booking/payment/intent error:', error);
+
   if (error instanceof ZodError) {
     return response(
       {
         success: false,
         error: {
-          code: 'INVALID_PAYMENT_REQUEST',
-          message: 'Select a valid accepted quote.',
+          code: 'PAYMENT_CONFIG_ERROR',
+          message:
+            'Stripe payment configuration error. Check that STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET are configured.',
         },
       },
-      422,
+      500,
     );
   }
   if (error instanceof BookingSessionNotFoundError) {
@@ -51,7 +54,9 @@ function errorResponse(error) {
         ? 404
         : error.code === 'PAYMENT_CONFLICT'
           ? 409
-          : 422;
+          : error.code === 'QUOTE_NOT_PAYABLE'
+            ? 422
+            : 500;
     return response(
       {
         success: false,
@@ -69,10 +74,6 @@ function errorResponse(error) {
       503,
     );
   }
-  console.error('Payment Intent creation failed', {
-    name: error?.name,
-    message: error?.message,
-  });
   return response(
     {
       success: false,
@@ -86,9 +87,10 @@ function errorResponse(error) {
 }
 
 export async function POST(request) {
+  const expectedOrigin = request.nextUrl?.origin || new URL(request.url).origin;
   if (
     request.headers.get('origin') &&
-    request.headers.get('origin') !== request.nextUrl.origin
+    request.headers.get('origin') !== expectedOrigin
   ) {
     return response(
       {
@@ -103,8 +105,27 @@ export async function POST(request) {
   }
   const token = getBookingSessionToken();
   if (!token) return errorResponse(new BookingSessionNotFoundError());
+
+  let quoteId;
   try {
-    const { quoteId } = paymentIntentRequestSchema.parse(await request.json());
+    const body = await request.json();
+    const parsed = paymentIntentRequestSchema.parse(body);
+    quoteId = parsed.quoteId;
+  } catch (parseError) {
+    console.error('API /api/booking/payment/intent invalid request body:', parseError);
+    return response(
+      {
+        success: false,
+        error: {
+          code: 'INVALID_PAYMENT_REQUEST',
+          message: 'Booking details could not be verified. Please refresh and try again.',
+        },
+      },
+      422,
+    );
+  }
+
+  try {
     const simulationEnabled = isPaymentSimulationEnabled();
     const intent = simulationEnabled
       ? await createOrLoadSimulatedPayment(token, quoteId)

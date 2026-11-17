@@ -33,7 +33,11 @@ function throwRepositoryError(error) {
       'PAYMENT_CONFLICT',
     );
   }
-  throw new PaymentPersistenceError();
+  console.error('Payment database error from Supabase RPC:', error);
+  throw new PaymentPersistenceError(
+    error?.message || 'Payment persistence is temporarily unavailable.',
+    'PAYMENT_UNAVAILABLE',
+  );
 }
 
 function mapStatus(row) {

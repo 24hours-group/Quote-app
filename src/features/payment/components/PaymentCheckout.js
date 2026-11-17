@@ -46,7 +46,7 @@ export function PaymentCheckout({ quote, onSimulationComplete }) {
       <LoadingSpinner
         card
         label="Preparing secure checkout…"
-        sublabel="Setting up encrypted payment session with Stripe"
+        sublabel="Setting up your secure checkout session"
       />
     );
   }
@@ -90,7 +90,7 @@ export function PaymentCheckout({ quote, onSimulationComplete }) {
         <LoadingSpinner
           card
           label="Payment received…"
-          sublabel="Waiting for verified server confirmation from Stripe"
+          sublabel="Waiting for verified server confirmation"
         />
       ) : null}
       {paymentStatus.status === 'error' ? (
