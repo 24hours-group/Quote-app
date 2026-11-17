@@ -175,37 +175,47 @@ export function NotificationOutboxList({
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th>Booking Ref</th>
-                  <th>Event Type</th>
-                  <th>Recipient</th>
-                  <th>Status</th>
-                  <th>Attempts</th>
-                  <th>Error</th>
-                  <th>Timestamp</th>
-                  <th>Actions</th>
+                  <th className={styles.thRef}>Booking Ref</th>
+                  <th className={styles.thEvent}>Event Type</th>
+                  <th className={styles.thRecipient}>Recipient</th>
+                  <th className={styles.thStatus}>Status</th>
+                  <th className={styles.thAttempts}>Attempts</th>
+                  <th className={styles.thError}>Error</th>
+                  <th className={styles.thDate}>Timestamp</th>
+                  <th className={styles.thActions}>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {paginatedNotifications.map((notif) => (
                   <tr key={notif.id}>
                     <td className={styles.bookingRef}>
-                      {notif.bookings?.reference || 'System'}
+                      <span className={styles.bookingRefPill}>
+                        {notif.bookings?.reference || 'System'}
+                      </span>
                     </td>
                     <td className={styles.eventName}>
                       {notif.event_name?.replaceAll('_', ' ')}
                     </td>
                     <td className={styles.recipientText}>{notif.recipient}</td>
-                    <td>{renderStatusBadge(notif.delivery_status)}</td>
+                    <td className={styles.statusCell}>
+                      {renderStatusBadge(notif.delivery_status)}
+                    </td>
                     <td className={styles.retryCountText}>
                       {notif.retry_count} / {notif.max_attempts || 5}
                     </td>
                     <td className={styles.errorCodeText}>
-                      {notif.last_error_code || '—'}
+                      {notif.last_error_code ? (
+                        <span className={styles.errorPill}>
+                          {notif.last_error_code}
+                        </span>
+                      ) : (
+                        <span className={styles.noError}>—</span>
+                      )}
                     </td>
-                    <td>
+                    <td className={styles.dateCell}>
                       <FormattedDate value={notif.created_at} />
                     </td>
-                    <td>
+                    <td className={styles.actionsCell}>
                       <button
                         type="button"
                         onClick={() => setNotificationToDelete(notif)}

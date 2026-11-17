@@ -3,8 +3,7 @@
 }
 
 .headerCard {
-  @apply flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm;
-  @apply sm:flex-row sm:items-center sm:justify-between;
+  @apply flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between;
 }
 
 .headerInfo {
@@ -12,7 +11,7 @@
 }
 
 .headerIconWrapper {
-  @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-blue-50 text-blue-600;
+  @apply flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-200/70;
 }
 
 .headerTitle {
@@ -20,11 +19,11 @@
 }
 
 .headerDesc {
-  @apply text-xs text-slate-500 mt-1;
+  @apply text-xs text-slate-400 mt-1;
 }
 
 .saveButton {
-  @apply inline-flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-50;
+  @apply inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition hover:bg-blue-700 disabled:opacity-40 cursor-pointer active:scale-95;
 }
 
 .saveSpinner {
@@ -32,28 +31,27 @@
 }
 
 .feedbackSuccess {
-  @apply flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-800;
+  @apply flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-semibold text-emerald-800;
 }
 
 .feedbackError {
-  @apply flex items-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-medium text-rose-800;
+  @apply flex items-center gap-2 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-800;
 }
 
 .sectionsGrid {
-  @apply grid grid-cols-1 gap-6;
-  @apply lg:grid-cols-2;
+  @apply grid grid-cols-1 gap-6 lg:grid-cols-2;
 }
 
 .sectionCard {
-  @apply flex flex-col gap-4 rounded-xl border border-slate-200 bg-white p-6 shadow-sm;
+  @apply flex flex-col gap-4 rounded-2xl border border-slate-200/80 bg-white p-6 shadow-sm transition hover:shadow-md;
 }
 
 .sectionHeader {
-  @apply flex items-center gap-2.5 border-b border-slate-100 pb-3 text-sm font-semibold text-slate-800;
+  @apply flex items-center gap-2.5 border-b border-slate-100 pb-3 text-sm font-bold text-slate-800;
 }
 
 .sectionIcon {
-  @apply text-slate-500;
+  @apply text-blue-500;
 }
 
 .fieldGroup {
@@ -65,30 +63,29 @@
 }
 
 .fieldHint {
-  @apply text-[11px] text-slate-400;
+  @apply text-[11px] text-slate-400 font-normal;
 }
 
 .fieldError {
-  @apply text-[11px] font-medium text-rose-600;
+  @apply text-[11px] font-semibold text-rose-600;
 }
 
 .textInput {
-  @apply rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500;
+  @apply rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100;
 }
 
 .selectInput {
-  @apply rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 text-xs text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500;
+  @apply rounded-xl border border-slate-200 bg-slate-50/50 px-3.5 py-2 text-xs font-medium text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100 cursor-pointer;
 }
 
 .textareaInput {
-  @apply rounded-lg border border-slate-200 bg-slate-50/50 p-3 text-xs text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-1 focus:ring-blue-500;
+  @apply rounded-xl border border-slate-200 bg-slate-50/50 p-3 text-xs font-medium text-slate-900 outline-none transition focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-100;
 }
 
 .loadingContainer {
-  @apply flex items-center justify-center p-12 text-xs font-medium text-slate-500;
+  @apply flex items-center justify-center p-12 text-xs font-medium text-slate-400;
 }
 
 .footerMeta {
   @apply flex items-center justify-between border-t border-slate-100 pt-4 text-[11px] text-slate-400;
 }
-

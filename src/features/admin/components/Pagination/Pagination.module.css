@@ -1,5 +1,5 @@
 .container {
-  @apply flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 pb-1 border-t border-slate-200/80;
+  @apply flex flex-col sm:flex-row items-center justify-between gap-3 pt-4 pb-1 border-t border-slate-200/80;
 }
 
 .summaryWrap {
@@ -7,7 +7,7 @@
 }
 
 .summaryText {
-  @apply text-xs text-slate-500;
+  @apply text-xs text-slate-400 font-normal;
 }
 
 .summaryHighlight {
@@ -19,11 +19,11 @@
 }
 
 .pageSizeLabel {
-  @apply text-[11px] font-semibold text-slate-500 uppercase tracking-wider;
+  @apply text-[11px] font-bold text-slate-400 uppercase tracking-wider;
 }
 
 .pageSizeSelect {
-  @apply rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-navy-900 focus:outline-none focus:ring-1 focus:ring-navy-900 cursor-pointer;
+  @apply rounded-full border border-slate-200 bg-white px-2.5 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-200 cursor-pointer;
 }
 
 .navGroup {
@@ -31,7 +31,7 @@
 }
 
 .arrowButton {
-  @apply inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition duration-150 hover:bg-slate-50 hover:border-slate-300 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none;
+  @apply inline-flex items-center gap-1 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition duration-150 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none;
 }
 
 .arrowLabel {
@@ -43,18 +43,17 @@
 }
 
 .pageButton {
-  @apply inline-flex items-center justify-center min-w-[32px] h-8 rounded-lg text-xs font-bold transition duration-150 active:scale-95 cursor-pointer;
+  @apply inline-flex items-center justify-center min-w-[32px] h-8 rounded-full text-xs font-semibold transition duration-150 active:scale-95 cursor-pointer;
 }
 
 .pageButtonActive {
-  @apply bg-navy-900 border border-navy-900 text-white shadow-sm;
+  @apply bg-blue-600 border border-blue-600 text-white shadow-sm shadow-blue-500/20 font-bold;
 }
 
 .pageButtonInactive {
-  @apply border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300;
+  @apply border border-slate-200 bg-white text-slate-700 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-600 font-medium;
 }
 
 .ellipsis {
-  @apply inline-flex items-center justify-center min-w-[24px] h-8 text-xs font-bold text-slate-400 select-none;
+  @apply inline-flex items-center justify-center min-w-[24px] h-8 text-xs font-medium text-slate-400 select-none;
 }
-

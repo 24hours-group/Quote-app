@@ -1,21 +1,26 @@
+import Image from 'next/image';
 import Link from 'next/link';
-import { Truck } from 'lucide-react';
 import { applicationConfig } from '@/config/application';
 import { routes } from '@/config/routes';
 import styles from './AppShell.module.css';
 
 export function AppShell({ children, admin = false }) {
   return (
-    <div className={styles.shell}>
+    <div className={admin ? styles.adminShell : styles.shell}>
       <header className={styles.header}>
-        <div className={styles.headerInner}>
+        <div className={admin ? styles.headerInnerAdmin : styles.headerInner}>
           <Link
             className={styles.brand}
             href={admin ? routes.admin : routes.book}
           >
-            <span className={styles.brandLogo} aria-hidden="true">
-              <Truck size={19} strokeWidth={2.4} />
-            </span>
+            <Image
+              alt={applicationConfig.company.name}
+              className={styles.brandLogo}
+              height={38}
+              priority
+              src="/TowNexaa-logo.png"
+              width={58}
+            />
             <span className={styles.brandText}>
               <span className={styles.brandName}>{applicationConfig.company.name}</span>
               <span className={styles.tagline}>
@@ -40,8 +45,8 @@ export function AppShell({ children, admin = false }) {
           </nav>
         </div>
       </header>
-      <main className={styles.main}>{children}</main>
-      <footer className={styles.footer}>
+      <main className={admin ? styles.adminMain : styles.main}>{children}</main>
+      <footer className={admin ? styles.adminFooter : styles.footer}>
         <div>
           © {new Date().getFullYear()}{' '}
           <span className={styles.footerBrand}>

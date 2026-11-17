@@ -2,12 +2,20 @@
   @apply min-h-screen bg-canvas;
 }
 
+.adminShell {
+  @apply min-h-screen bg-slate-50 text-slate-900 ;
+}
+
 .header {
-  @apply sticky top-0 z-30 border-0 border-b border-solid border-slate-200/80 bg-white/95 backdrop-blur-md;
+  @apply sticky top-0 z-30 border-0 border-b border-solid border-slate-200/80 bg-white/90 backdrop-blur-md;
 }
 
 .headerInner {
   @apply mx-auto flex min-h-16 max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8;
+}
+
+.headerInnerAdmin {
+  @apply mx-auto flex min-h-16 max-w-[1600px] items-center justify-between px-4 sm:px-6 lg:px-8;
 }
 
 .brand {
@@ -15,7 +23,7 @@
 }
 
 .brandLogo {
-  @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-500 text-white shadow-sm transition-transform hover:scale-105;
+  @apply h-9 w-auto shrink-0 object-contain transition-transform hover:scale-105;
 }
 
 .brandText {
@@ -23,7 +31,7 @@
 }
 
 .brandName {
-  @apply text-lg font-extrabold tracking-tight text-navy-900 leading-none;
+  @apply text-lg font-bold tracking-tight text-slate-900 leading-none;
 }
 
 .tagline {
@@ -31,15 +39,15 @@
 }
 
 .nav {
-  @apply flex items-center gap-4 text-sm font-semibold text-slate-600;
+  @apply flex items-center gap-3 text-sm font-medium text-slate-600;
 }
 
 .navLink {
-  @apply rounded-lg px-2.5 py-1.5 transition-colors hover:bg-slate-100 hover:text-navy-900;
+  @apply rounded-full px-3 py-1.5 transition-colors hover:bg-blue-50 hover:text-blue-600 text-xs font-semibold text-slate-600;
 }
 
 .supportBadge {
-  @apply hidden items-center gap-1.5 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-brand-600 border border-blue-100 sm:inline-flex;
+  @apply hidden items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 border border-emerald-200/80 sm:inline-flex;
 }
 
 .pulseDot {
@@ -50,14 +58,22 @@
   @apply mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-12 lg:px-8;
 }
 
+.adminMain {
+  @apply mx-auto w-full  max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8;
+}
+
 .footer {
   @apply mx-auto max-w-6xl px-4 py-8 text-sm text-slate-500 sm:px-6 lg:px-8 border-0 border-t border-solid border-slate-200/70 mt-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2;
 }
 
+.adminFooter {
+  @apply mx-auto max-w-[1600px] px-4 py-8 text-xs text-slate-500 sm:px-6 lg:px-8 border-0 border-t border-solid border-slate-200/70 mt-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2;
+}
+
 .footerBrand {
-  @apply font-bold text-navy-900;
+  @apply font-bold text-slate-800;
 }
 
 .footerTagline {
-  @apply text-xs text-slate-400 font-medium;
+  @apply text-xs text-slate-400 font-normal;
 }

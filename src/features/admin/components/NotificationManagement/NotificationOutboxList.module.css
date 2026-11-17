@@ -11,19 +11,27 @@
 }
 
 .filterPill {
-  @apply rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-bold text-slate-600 transition duration-150 hover:bg-slate-50 cursor-pointer select-none active:scale-95;
+  @apply rounded-full border border-slate-200/80 bg-white px-3.5 py-1.5 text-xs font-semibold text-slate-600 transition duration-150 hover:bg-indigo-50 hover:border-indigo-200 hover:text-indigo-700 cursor-pointer select-none active:scale-95;
 }
 
 .filterPillActive {
-  @apply bg-navy-900 border-navy-900 text-white;
+  @apply bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-500/20 hover:bg-indigo-700 hover:border-indigo-700;
 }
 
 .retryBtn {
-  @apply inline-flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white shadow-sm transition duration-150 hover:bg-blue-700 disabled:opacity-50 cursor-pointer select-none active:scale-95 disabled:active:scale-100;
+  @apply inline-flex items-center gap-1.5 rounded-full bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm shadow-blue-500/20 transition duration-150 hover:bg-blue-700 disabled:opacity-40 cursor-pointer select-none active:scale-95 disabled:active:scale-100;
+}
+
+.resultSuccess {
+  @apply rounded-xl bg-emerald-50 border border-emerald-200 p-3 text-xs font-semibold text-emerald-800;
+}
+
+.resultError {
+  @apply rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs font-semibold text-rose-800;
 }
 
 .tableWrap {
-  @apply overflow-x-auto rounded-2xl border border-slate-200/90 bg-white shadow-sm;
+  @apply overflow-x-auto rounded-2xl border border-slate-200/80 bg-white shadow-sm;
   scrollbar-width: thin;
   scrollbar-color: #cbd5e1 transparent;
 }
@@ -46,71 +54,117 @@
 }
 
 .table {
-  @apply w-full text-left border-collapse text-xs;
+  @apply w-full min-w-[1100px] text-left border-collapse text-xs whitespace-nowrap;
 }
 
 .table thead tr {
-  @apply border-b border-slate-200 bg-slate-50/80;
+  @apply border-b border-slate-200/80 bg-slate-50/80;
 }
 
 .table th {
-  @apply px-4 py-3 font-bold text-slate-600 uppercase tracking-wider text-[11px];
+  @apply px-6 py-4 font-bold text-slate-500 uppercase tracking-wider text-[11px] whitespace-nowrap bg-slate-50/80;
+}
+
+.thRef {
+  @apply min-w-[140px] w-[140px];
+}
+
+.thEvent {
+  @apply min-w-[200px];
+}
+
+.thRecipient {
+  @apply min-w-[260px];
+}
+
+.thStatus {
+  @apply min-w-[140px] w-[140px];
+}
+
+.thAttempts {
+  @apply min-w-[110px] w-[110px];
+}
+
+.thError {
+  @apply min-w-[180px];
+}
+
+.thDate {
+  @apply min-w-[180px];
+}
+
+.thActions {
+  @apply min-w-[80px] w-[80px] text-right;
 }
 
 .table tbody tr {
-  @apply border-b border-slate-100 transition hover:bg-slate-50/70;
+  @apply border-b border-slate-100 transition-colors hover:bg-indigo-50/30;
 }
 
 .table td {
-  @apply px-4 py-3 align-middle;
-}
-
-.statusDelivered {
-  @apply inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 px-2.5 py-0.5 text-[11px] font-bold;
-}
-
-.statusFailed {
-  @apply inline-flex items-center gap-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 px-2.5 py-0.5 text-[11px] font-bold;
-}
-
-.statusPending {
-  @apply inline-flex items-center gap-1 rounded-full bg-amber-100 text-amber-800 border border-amber-300 px-2.5 py-0.5 text-[11px] font-bold;
+  @apply px-6 py-4 align-middle whitespace-nowrap text-slate-700;
 }
 
 .bookingRef {
-  @apply font-mono font-bold text-navy-950;
+  @apply whitespace-nowrap;
+}
+
+.bookingRefPill {
+  @apply inline-flex items-center font-mono font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full border border-blue-200/70 text-xs shadow-sm;
 }
 
 .eventName {
-  @apply font-semibold text-slate-700;
+  @apply font-semibold text-slate-800 capitalize whitespace-nowrap;
 }
 
 .recipientText {
-  @apply text-slate-600 font-medium;
+  @apply font-medium text-slate-800 whitespace-nowrap;
+}
+
+.statusCell {
+  @apply whitespace-nowrap;
+}
+
+.statusDelivered {
+  @apply inline-flex items-center gap-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-1 text-[11px] font-bold whitespace-nowrap;
+}
+
+.statusFailed {
+  @apply inline-flex items-center gap-1.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 px-3 py-1 text-[11px] font-bold whitespace-nowrap;
+}
+
+.statusPending {
+  @apply inline-flex items-center gap-1.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200 px-3 py-1 text-[11px] font-bold whitespace-nowrap;
 }
 
 .retryCountText {
-  @apply text-slate-500 font-mono;
+  @apply text-slate-500 font-mono text-xs font-semibold whitespace-nowrap;
 }
 
 .errorCodeText {
-  @apply text-rose-600 font-mono text-[11px];
+  @apply whitespace-nowrap;
+}
+
+.errorPill {
+  @apply inline-flex items-center font-mono text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-0.5 rounded-md;
+}
+
+.noError {
+  @apply text-slate-300 font-normal;
+}
+
+.dateCell {
+  @apply text-slate-500 font-normal whitespace-nowrap text-xs;
+}
+
+.actionsCell {
+  @apply text-right whitespace-nowrap;
 }
 
 .deleteBtn {
-  @apply inline-flex items-center justify-center p-1.5 rounded-lg text-slate-400 transition duration-150 hover:bg-rose-50 hover:text-rose-600 active:scale-95 cursor-pointer;
-}
-
-.resultSuccess {
-  @apply rounded-xl bg-blue-50 border border-blue-200 p-3 text-xs font-bold text-blue-900;
-}
-
-.resultError {
-  @apply rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs font-bold text-rose-900;
+  @apply inline-flex items-center justify-center text-slate-400 hover:text-rose-600 p-2 rounded-full hover:bg-rose-50 transition active:scale-90 cursor-pointer;
 }
 
 .emptyState {
-  @apply rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-12 text-center text-sm font-medium text-slate-500;
+  @apply rounded-2xl border border-dashed border-slate-200 bg-slate-50/60 p-12 text-center text-sm font-normal text-slate-500;
 }
-
-

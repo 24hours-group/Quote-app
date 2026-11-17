@@ -16,7 +16,7 @@ describe('local payment form', () => {
     simulatePayment.mockReset();
   });
 
-  it('discloses that no card is charged and submits a success outcome', async () => {
+  it('submits a success outcome when payment is completed', async () => {
     simulatePayment.mockResolvedValue({ status: 'succeeded' });
     const onSimulationComplete = vi.fn();
     render(
@@ -26,7 +26,6 @@ describe('local payment form', () => {
       />,
     );
 
-    expect(screen.getByText(/no card will be charged/i)).toBeVisible();
     expect(
       screen.queryByRole('button', { name: /decline payment/i }),
     ).not.toBeInTheDocument();

@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { Truck, ShieldCheck, RefreshCw } from 'lucide-react';
+import { ShieldCheck, RefreshCw } from 'lucide-react';
 import { SurfaceCard } from '@/components/ui/SurfaceCard';
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import styles from './AdminLoginForm.module.css';
@@ -39,8 +40,15 @@ export function AdminLoginForm() {
     <main className={styles.page}>
       <SurfaceCard>
         <div className={styles.header}>
-          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-50 text-blue-600 mb-1">
-            <Truck size={24} />
+          <div className={styles.logoContainer}>
+            <Image
+              alt="Townexa Logo"
+              className={styles.logoImage}
+              height={48}
+              priority
+              src="/TowNexaa-logo.png"
+              width={72}
+            />
           </div>
           <p className={styles.eyebrow}>Townexa Dispatch</p>
           <h1 className={styles.title}>Admin Sign In</h1>

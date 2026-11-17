@@ -3,7 +3,7 @@
 }
 
 .kpiCard {
-  @apply relative overflow-hidden rounded-2xl border border-slate-200/90 bg-white p-5 shadow-sm transition hover:shadow-md;
+  @apply relative overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm transition-all duration-200 hover:shadow-md hover:border-blue-200;
 }
 
 .kpiHeader {
@@ -11,33 +11,33 @@
 }
 
 .label {
-  @apply text-xs font-bold uppercase tracking-wider text-slate-500;
+  @apply text-[11px] font-bold uppercase tracking-wider text-slate-500;
 }
 
 .iconWrap {
-  @apply flex h-9 w-9 items-center justify-center rounded-xl;
+  @apply flex h-9 w-9 items-center justify-center rounded-xl transition duration-150;
 }
 
 .iconWrapBlue {
-  @apply bg-blue-50 text-blue-600;
+  @apply bg-blue-50 text-blue-600 border border-blue-200/80 shadow-sm shadow-blue-500/10;
 }
 
 .iconWrapGreen {
-  @apply bg-emerald-50 text-emerald-600;
+  @apply bg-emerald-50 text-emerald-600 border border-emerald-200/80 shadow-sm shadow-emerald-500/10;
 }
 
 .iconWrapAmber {
-  @apply bg-amber-50 text-amber-600;
+  @apply bg-amber-50 text-amber-600 border border-amber-200/80 shadow-sm shadow-amber-500/10;
 }
 
 .iconWrapRose {
-  @apply bg-rose-50 text-rose-600;
+  @apply bg-rose-50 text-rose-600 border border-rose-200/80 shadow-sm shadow-rose-500/10;
 }
 
 .value {
-  @apply mt-2 text-3xl font-black tracking-tight text-navy-950;
+  @apply mt-2 text-3xl font-extrabold tracking-tight text-slate-900;
 }
 
 .hint {
-  @apply mt-1 text-xs text-slate-500;
+  @apply mt-1 text-xs text-slate-400 font-medium;
 }
